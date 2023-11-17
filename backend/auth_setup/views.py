@@ -15,8 +15,8 @@ from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
 from django.utils.encoding import force_str,force_bytes
 from django.contrib.auth import get_user_model,authenticate
 from verify_email.email_handler import send_verification_email
-from six import text_type as force_text, binary_type as force_bytes
-
+from django.views.generic import View
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -49,7 +49,8 @@ class UserRegister(CreateAPIView):
 
             # Build verification URL
             verification_url = reverse('verify-user', kwargs={'uidb64': uid, 'token': token})
-            verification_url = f'{request.build_absolute_uri(verification_url)}?context=user'
+            verification_url = f'{request.build_absolute_uri(verification_url)}'
+
 
             # Send verification email
             subject = 'Profcio | Activate Your Account'
@@ -67,41 +68,44 @@ class UserRegister(CreateAPIView):
     
 
 
-class VerifyUserView(GenericAPIView):
+
+class VerifyUserView(View):
     def get(self, request, uidb64, token):
-        print(uidb64,'usmaaaaaaaaaaaaaaaaaaaaaaaaaaan')
-        # user_id = force_text(urlsafe_base64_decode(uidb64))
-        user_id = len(uidb64)-10
-        print(user_id,'kkkkkkkkkkkkkkkkkkkkkaaaaaaaaaaaa')
-        user = get_user_model().objects.get(pk=user_id)
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = get_user_model().objects.get(pk=uid)
 
-        if not user.is_active and default_token_generator.check_token(user, token):
-            user.is_active = True
-            user.save()
-            print('lottttttttttttttttttttttttttttttttttttttaaaaaaaaaaaaaaaaaaaaaaa')
+            if not user.is_active and default_token_generator.check_token(user, token):
+                user.is_active = True
+                user.save()
 
-            context = request.GET.get('context')
+                context = user.user_type
 
-            # create a JWT token for the user
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
+                # Create a JWT token for the user
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
 
-            # include the token for the user
-            if context == 'employee':
-                redirect_url = 'http://localhost:5173/employee/login'
-            else:
-                redirect_url = 'http://localhost:5173/user/login'
+                # Include the token for the user
+                if context == 'employee':
+                    redirect_url = 'http://localhost:5173/employee/login'
+                else:
+                    redirect_url = 'http://localhost:5173/login/'
 
-            return redirect(redirect_url)
+                return redirect(redirect_url)
 
-        # except get_user_model().DoesNotExist:
-        #     message = 'Activation Link Expired, please register again'
-        #     return JsonResponse({'error': message}, status=400)
+        except ObjectDoesNotExist:
+            message = 'Activation Link Expired, please register again'
+            return JsonResponse({'error': message}, status=400)
 
-        # except Exception as e:
-        #     # Handle other exceptions if needed
-        #     message = 'An error occurred during verification'
-        #     return JsonResponse({'error': message}, status=500)
+        except Exception as e:
+            # Handle other exceptions if needed
+            message = f'An error occurred during verification: {str(e)}'
+            return JsonResponse({'error': message}, status=500)
+
+        return JsonResponse({'error': 'Invalid activation link'}, status=400)
+
+
+
 
         
 

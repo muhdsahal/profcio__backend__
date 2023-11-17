@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+SITE_ID = 1 
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,14 +41,26 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'auth_setup',
-    'rest_framework',
     'notifications',
     'corsheaders',
+    'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'verify_email.apps.VerifyEmailConfig',
+
+    # social authentication
+    'allauth', # pip install django-allauth==0.52.0
+    'allauth.account',
+    'allauth.socialaccount', # add if you want social authentication
+
+    'dj_rest_auth', # pip install "dj-rest-auth[with_social]==4.0.0"
+    'dj_rest_auth.registration'
  
 ]
+
+TOKEN_MODEL = None
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -205,6 +217,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    # ... other hashers ...
+]
 
 
 #email setup

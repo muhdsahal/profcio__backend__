@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+# from auth_setup.views import account_inactive
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/',include('auth_setup.urls')),
     # path('verification/', include('verify_email.urls')),
+    # path('account_inactive/', account_inactive, name='account_inactive'),
 ]
+

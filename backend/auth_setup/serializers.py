@@ -24,3 +24,11 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_admin'] = user.is_superuser
 
         return token
+
+class GoogleAuthSerializer(serializers.ModelSerializer):
+    model = User
+    fields =['id','username','email','password','profile_image','user_type','is_google']
+    extra_kwargs ={
+        'password':{'write_only':True}
+    }
+    
