@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from phonenumber_field.modelfields import PhoneNumberField
+from django.utils import timezone
+
+timezone.now()
+
 # Create your models here.
 
 class User(AbstractUser):
@@ -21,41 +26,40 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=False)
 
     user_type = models.CharField(max_length=20,choices=USER_TYPES,default='user')
+    
+    is_google = models.BooleanField(default=False)
+
+    phone_number = PhoneNumberField(blank=True)
+
+    work = models.CharField(max_length=100,blank=True)
+    
+    place = models.CharField(max_length=150, default="Unknown")
+
+    description = models.TextField(null=True,blank=True)
+    
+    experience = models.IntegerField(default=1)
+    
+    charge = models.IntegerField(default=0)
 
     USERNAME_FIELD = 'email'
 
     REQUIRED_FIELDS = ['username']
 
-    # def save(self,*args,**kwargs):
-    #     created = not self.pk # Check if this is a new instance being created
-    #     super(User,self).save(*args,**kwargs)
 
-    #     if created and self.user_type == 'employee':
-    #         #create a notification when new employee is created
-    #         notification = AdminNotificationCreate(
-    #             name =f"Name User Created :{self.email}",
-    #             description = f"A New Employee created named '{self.name}'",
-    #             is_opened = False,
-    #             notification_type = 'register',
-    #         )
-    #         notification.save()
+# class EmployeeDetail(models.Model):
 
-class EmployeeDetail(models.Model):
+#     user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
 
-    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    
 
-    contact = models.CharField(max_length=50)
+# class UserDetail(models.Model):
 
-    description = models.TextField(null=True)
+#     user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
 
-class UserDetail(models.Model):
+#     first_name = models.CharField(max_length=50)
 
-    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+#     last_name = models.CharField(max_length=50)
 
-    first_name = models.CharField(max_length=50)
+#     occupation = models.CharField(max_length=50)
 
-    last_name = models.CharField(max_length=50)
-
-    occupation = models.CharField(max_length=50)
-
-    contact = models.CharField(max_length=50)
+#     contact = models.CharField(max_length=50)
