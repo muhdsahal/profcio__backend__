@@ -13,10 +13,13 @@ urlpatterns = [
     # path('verify/<str:uid64>/<str:token>/', VerifyUserView.as_view(),name='verify-user'), #email verification
     path('user_block_unblock/<int:pk>/',Userblock.as_view(),name='userblock'),
     path('googleauth/',GoogleAuthentication.as_view(),name='GoogleAuthentication'),
+    path('googleauthemp/',GoogleAuthEmployee.as_view(),name='GoogleAuthEmployee'),
     path('auth/verify/<str:uidb64>/<str:token>/', VerifyUserView.as_view(), name='verify-user'),
     path('forgot_password/',ForgotPasswordView.as_view(),name='forgot_password'),
     path('reset_password/<str:uidb64>/<str:token>/',PasswordResetView.as_view(),name='reset_password'),
     path('userdetails/',UserDetails.as_view(),name='user_details'),
+
+    path('services/', ServiceListCreateView.as_view(), name='servicelistcreate'),
     path('employeelisting/',EmployeeProfileData.as_view(),name='EmployeeListing'),
     path('register/',RegisterView.as_view(),name='rest_register'),
     path('login/',LoginView.as_view(),name='rest_login'),

@@ -12,6 +12,7 @@ from . import *
 from rest_framework.generics import (
     ListCreateAPIView,RetrieveUpdateDestroyAPIView,
     CreateAPIView,GenericAPIView,ListAPIView,UpdateAPIView)
+from rest_framework import generics
 from rest_framework.views import APIView
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
@@ -225,7 +226,35 @@ class GoogleAuthentication(APIView):
         else:
             return Response({'status': 'error', 'msg': 'Authentication failed'})
 
+class GoogleAuthEmployee(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
 
+        if not User.objects.filter(email=email, is_google=True).exists():
+            serializer = GoogleAuthSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                user.user_type = "employee"
+                user.is_active = True
+                user.is_google = True
+                user.set_password(password)
+                user.save()
+
+        user = authenticate(email=email, password=password)
+
+        if user is not None:
+            token = create_jwt_pair_token(user)
+            response_data = {
+                'status': 'Success',
+                'msg': 'Registration Successfully',
+                'token': token,
+            }
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'status': 'error', 'msg': 'Authentication failed'})
 
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)
@@ -251,10 +280,10 @@ class UserDetails(ListAPIView):
     lookup_field = 'id'
 
 
-class EmployeeListing(ListAPIView):
-    queryset = User.objects.filter(user_type = 'employee').order_by('id')
-    serializer_class = UserSerializer
-    lookup_field  = 'id'
+# class EmployeeListing(ListAPIView):
+#     queryset = User.objects.filter(user_type = 'employee').order_by('id')
+#     serializer_class = UserSerializer
+#     lookup_field  = 'id'
 
                                                             
 
@@ -286,3 +315,7 @@ class Userblock(APIView):
 class EmployeeProfileData(ListCreateAPIView):
     queryset =User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
+
+class ServiceListCreateView(generics.ListCreateAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
