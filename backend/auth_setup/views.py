@@ -88,6 +88,9 @@ class VerifyUserView(View):
                 context = user.user_type
                 # Create a JWT token for the user
                 refresh = RefreshToken.for_user(user)
+                # print("#########")
+                # print(refresh,'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+                # print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
                 access_token = str(refresh.access_token)
                 if context == 'employee':
                     redirect_url = 'http://localhost:5173/employee/employee_login/'
@@ -119,6 +122,15 @@ class EmployeeRegister(CreateAPIView):
     def post(self,request):
         email = request.data.get('email')
         password = request.data.get('password')
+        profile_photo =request.data.get('profile_photo')
+        is_active = request.data.get('is_active')
+        phone_number = request.data.get('phone_number')
+        work = request.data.get('work')
+        place = request.data.get('place')
+        description = request.data.get('description')
+        experience = request.data.get('experience')
+        charge = request.data.get('charge')
+
         serializer = UserSerializer(data=request.data)  #call data from the Userserializer
 
         if serializer.is_valid(raise_exception=True):
@@ -132,7 +144,8 @@ class EmployeeRegister(CreateAPIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             #createing varification url
-            verification_url = reverse('verify-user',kwargs={'uidb64':uid,'token':token}) + f'?context=employee'
+            verification_url = reverse('verify-user',kwargs={'uidb64':uid,'token':token})
+            + f'?context=employee'
             
             #send the varification email
             subject  = 'Profcio | Activate Your Account'
@@ -193,9 +206,14 @@ class PasswordResetView(APIView):
             # log the user in (optional)
             login = LoginView
             login(request,user)
-            return Response({'detail':'password reset successfully...'},status=status.HTTP_200_OK)
+            return Response({'detail':'password reset successfully...'},
+                            status=status.HTTP_200_OK)
         else:
-            return Response({'detail':'invalid token or user not found'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail':'invalid token or user not found'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        
+
+
 class GoogleAuthentication(APIView):
     def post(self, request):
         email = request.data.get('email')
@@ -315,6 +333,7 @@ class Userblock(APIView):
 class EmployeeProfileData(ListCreateAPIView):
     queryset =User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
+    print(queryset,'querysettttttttttttttttttttttttttttttttttttttt')
 
 class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()

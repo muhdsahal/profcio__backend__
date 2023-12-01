@@ -14,7 +14,6 @@ class User(AbstractUser):
         ('admin', 'admin'),
     )
 
-
     username =models.CharField(max_length=250,null=True)
 
     email = models.EmailField(max_length=250,unique=True)
@@ -51,6 +50,7 @@ class Service(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     category = models.CharField(max_length=100) 
+    
 # class EmployeeDetail(models.Model):
 
 #     user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
