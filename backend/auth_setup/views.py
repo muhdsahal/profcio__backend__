@@ -23,6 +23,8 @@ from django.views.generic import View
 from django.core.exceptions import ObjectDoesNotExist
 from dj_rest_auth.views import LoginView
 from rest_framework.decorators import action
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 
 
@@ -51,7 +53,6 @@ class UserRegister(CreateAPIView):
             token = default_token_generator.make_token(user)
             print(user.pk)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            print(uid,'<<<<<<<<<<<<<<<<<<<<......>>>>>>>>>>')
 
             # Build verification URL
             verification_url = reverse('verify-user', kwargs={'uidb64': uid, 'token': token})
@@ -117,12 +118,13 @@ class VerifyUserView(View):
 
 class EmployeeRegister(CreateAPIView):
     def get_serializer_class(self):
-        return UserSerializer
+        return EmployeedataSerializer
     
     def post(self,request):
+        
         email = request.data.get('email')
         password = request.data.get('password')
-        profile_photo =request.data.get('profile_photo')
+        profile_photo = request.data.get('profile_photo')
         is_active = request.data.get('is_active')
         phone_number = request.data.get('phone_number')
         work = request.data.get('work')
@@ -130,13 +132,20 @@ class EmployeeRegister(CreateAPIView):
         description = request.data.get('description')
         experience = request.data.get('experience')
         charge = request.data.get('charge')
+        # Handle file upload for profile photo
+        profile_photo_file = request.data.get('profile_photo')
 
-        serializer = UserSerializer(data=request.data)  #call data from the Userserializer
+        if profile_photo_file:
+            file_name = default_storage.save(f'images/profile/{profile_photo_file.name}', ContentFile(profile_photo_file.read()))
+            profile_photo_path = default_storage.url(file_name)
+            request.data['profile_photo'] = profile_photo_path
 
+        serializer = EmployeedataSerializer(data=request.data) 
+         #call data from the Userserializer
         if serializer.is_valid(raise_exception=True):
-            user =serializer.save()
+            user = serializer.save()
             user.user_type = "employee"
-            user.set_password(password)
+            user.set_password(request.data.get('password'))
             user.save()
 
             # creating varification Token
@@ -144,8 +153,7 @@ class EmployeeRegister(CreateAPIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             #createing varification url
-            verification_url = reverse('verify-user',kwargs={'uidb64':uid,'token':token})
-            + f'?context=employee'
+            verification_url = reverse('verify-user',kwargs={'uidb64':uid,'token':token})+ f'?context=employee'
             
             #send the varification email
             subject  = 'Profcio | Activate Your Account'
@@ -153,11 +161,19 @@ class EmployeeRegister(CreateAPIView):
             
             from_email = 'sahalshalu830@gmail.com'
             recipient_list = [user.email]
-            send_mail(subject,message,from_email,recipient_list)
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+            try:
+                send_mail(subject,message,from_email,recipient_list)
+            except Exception as e:
+                print(f"Error sending :{e}")
+            data = {
+                "text":"account created,",
+                "status": 200
+            }
+            return Response(data=data)
         else:
             print('Serializer error are :' ,serializer.errors)
-            return Response({'status':'error','msg':serializer.error})
+            return Response({'status':'error','msg':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
 class ForgotPasswordView(APIView):
     def post(self,request):
@@ -333,7 +349,6 @@ class Userblock(APIView):
 class EmployeeProfileData(ListCreateAPIView):
     queryset =User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
-    print(queryset,'querysettttttttttttttttttttttttttttttttttttttt')
 
 class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()

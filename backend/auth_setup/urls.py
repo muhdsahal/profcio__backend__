@@ -10,6 +10,7 @@ urlpatterns = [
  
     path('register/',UserRegister.as_view(),name='register'),
     path('employeeregister/',EmployeeRegister.as_view(),name='EmployeeRegister'),
+    
     # path('verify/<str:uid64>/<str:token>/', VerifyUserView.as_view(),name='verify-user'), #email verification
     path('user_block_unblock/<int:pk>/',Userblock.as_view(),name='userblock'),
     path('googleauth/',GoogleAuthentication.as_view(),name='GoogleAuthentication'),

@@ -32,13 +32,13 @@ class User(AbstractUser):
 
     work = models.CharField(max_length=100,blank=True)
     
-    place = models.CharField(max_length=150, default="Unknown")
+    place = models.CharField(max_length=150, default="Unknown",blank=True,null=True)
 
     description = models.TextField(null=True,blank=True)
     
-    experience = models.IntegerField(default=1)
+    experience = models.IntegerField(blank=True,null=True)
     
-    charge = models.IntegerField(default=0)
+    charge = models.IntegerField(blank=True,null=True)
 
     USERNAME_FIELD = 'email'
 
