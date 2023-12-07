@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -7,6 +7,9 @@ from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import  *
+from rest_framework import filters
+from django.core.exceptions import FieldError
+
 #UserSerializer, myTokenObtainPairSerializer,GoogleAuthSerializer
 from . import *
 from rest_framework.generics import (
@@ -260,35 +263,6 @@ class GoogleAuthentication(APIView):
         else:
             return Response({'status': 'error', 'msg': 'Authentication failed'})
 
-class GoogleAuthEmployee(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-        
-
-        if not User.objects.filter(email=email, is_google=True).exists():
-            serializer = GoogleAuthSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                user = serializer.save()
-                user.user_type = "employee"
-                user.is_active = True
-                user.is_google = True
-                user.set_password(password)
-                user.save()
-
-        user = authenticate(email=email, password=password)
-
-        if user is not None:
-            token = create_jwt_pair_token(user)
-            response_data = {
-                'status': 'Success',
-                'msg': 'Registration Successfully',
-                'token': token,
-            }
-
-            return Response(response_data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'status': 'error', 'msg': 'Authentication failed'})
 
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)
@@ -312,6 +286,9 @@ class UserDetails(ListAPIView):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     lookup_field = 'id'
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['username', 'id', 'email', 'user_type']
+
 
 
 # class EmployeeListing(ListAPIView):
@@ -350,6 +327,29 @@ class EmployeeProfileData(ListCreateAPIView):
     queryset =User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
 
+#userprofile class
+class UserProfile(generics.ListCreateAPIView):
+    serializer_class = UserSerializer
+    def get_object(self,user_id):
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise Http404
+    def get(self,request,user_id):
+        user = self.get_object(user_id)
+        serializer = self.serializer_class(user)
+        return Response(serializer.data)
+    def put(self,request,user_id):
+        user = self.get_object(user_id)
+        serializer = self.serializer_class(user,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+        
 class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','description','category']

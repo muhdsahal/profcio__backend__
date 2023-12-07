@@ -47,11 +47,24 @@ class User(AbstractUser):
 
 
 class Service(models.Model):
+    CATEGORY =(
+        ("all_rounder","all_rounder"),
+        ("commercial","commercial"),
+        ("home","home"),
+    )
+
     name = models.CharField(max_length=255)
     description = models.TextField()
-    category = models.CharField(max_length=100) 
-    
+    category = models.CharField(max_length=20,choices=CATEGORY,default='home')
+    Service_image =  models.ImageField(upload_to='images/profile',blank=True,null=True)
+
+
+
 # class EmployeeDetail(models.Model):
+
+
+
+
 
 #     user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
 
