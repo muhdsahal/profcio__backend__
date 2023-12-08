@@ -266,7 +266,6 @@ class GoogleAuthentication(APIView):
 
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)
-
     refresh['email'] = user.email
     refresh['user_type'] = user.user_type
     refresh['is_active'] = user.is_active
