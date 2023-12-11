@@ -26,6 +26,5 @@ urlpatterns = [
     # path('verification/', include('verify_email.urls')),
     # path('account_inactive/', account_inactive, name='account_inactive'),
 ]
-urlpatterns += static(settings.STATIC_URL,document_root = settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
-
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

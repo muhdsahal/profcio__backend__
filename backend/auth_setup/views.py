@@ -281,7 +281,7 @@ def create_jwt_pair_token(user):
     }
 
 
-class UserDetails(ListAPIView):
+class UserDetails(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     lookup_field = 'id'
