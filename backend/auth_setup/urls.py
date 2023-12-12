@@ -18,6 +18,8 @@ urlpatterns = [
     path('forgot_password/',ForgotPasswordView.as_view(),name='forgot_password'),
     path('reset_password/<str:uidb64>/<str:token>/',PasswordResetView.as_view(),name='reset_password'),
     path('userdetails/',UserDetails.as_view(),name='user_details'),
+    
+    path('authentication/',Authentication.as_view(), name='Authentication'),
     path('services/', ServiceListCreateView.as_view(), name='servicelistcreate'),
 
     path('user_profile/<int:user_id>/',UserProfile.as_view(),name='userprofile'),

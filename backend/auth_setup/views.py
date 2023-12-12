@@ -28,6 +28,7 @@ from dj_rest_auth.views import LoginView
 from rest_framework.decorators import action
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -54,36 +55,31 @@ class UserRegister(CreateAPIView):
 
             # Generate verification token and UID
             token = default_token_generator.make_token(user)
-            print(user.pk)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             # Build verification URL
             verification_url = reverse('verify-user', kwargs={'uidb64': uid, 'token': token})
             verification_url = f'{request.build_absolute_uri(verification_url)}'
 
-
             # Send verification email
             subject = 'Profcio | Activate Your Account'
             message = f'Hi {user.username}, Welcome To Profcio..! Click the link to activate your account: {verification_url}'
-            from_email = 'sahalshalu830@gmail.com'  # Replace with your email
+            from_email = 'your@example.com'  # Replace with your email
             recipient_list = [user.email]
 
             send_mail(subject, message, from_email, recipient_list)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Return access and refresh tokens in the response
+            return Response(create_jwt_pair_token(user), status=status.HTTP_201_CREATED)
         else:
-            print('Serializer errors are:', serializer.errors)
             return Response({'status': 'error', 'msg': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    
 
-
-
-class VerifyUserView(View):
+class VerifyUserView(APIView):
     def get(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
-            user = get_user_model().objects.get(pk=uid)
+            user = User.objects.get(pk=uid)
 
             if not user.is_active and default_token_generator.check_token(user, token):
                 user.is_active = True
@@ -92,10 +88,8 @@ class VerifyUserView(View):
                 context = user.user_type
                 # Create a JWT token for the user
                 refresh = RefreshToken.for_user(user)
-                # print("#########")
-                # print(refresh,'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
-                # print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
                 access_token = str(refresh.access_token)
+
                 if context == 'employee':
                     redirect_url = 'http://localhost:5173/employee/employee_login/'
                 else:
@@ -113,8 +107,6 @@ class VerifyUserView(View):
             return JsonResponse({'error': message}, status=500)
 
         return JsonResponse({'error': 'Invalid activation link'}, status=400)
-
-
 
 
         
@@ -269,19 +261,26 @@ def create_jwt_pair_token(user):
     refresh['email'] = user.email
     refresh['user_type'] = user.user_type
     refresh['is_active'] = user.is_active
-    refresh['is_admin']= user.is_superuser
+    refresh['is_admin'] = user.is_superuser
     refresh['is_google'] = user.is_google
 
-    access_token =str(refresh.access_token)
+    access_token = str(refresh.access_token)
     refresh_token = str(refresh)
 
-    return{ 
-        "access" :access_token,
-        "refresh" :refresh_token
+    return {
+        "access": access_token,
+        "refresh": refresh_token
     }
 
+class Authentication(APIView):
+    permission_classes =(IsAuthenticated,)
+    def get(self,request):
+        content={'user':str(request.user),'userid':str(request.user.id),'email':str(request.user.email),'is_active':str(request.user.is_active)}
+        return Response(content)
 
 class UserDetails(ListAPIView):
+    permission_classes =(IsAuthenticated,)
+
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     lookup_field = 'id'
