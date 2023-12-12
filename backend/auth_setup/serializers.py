@@ -5,6 +5,8 @@ from .models import User,Service
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_photo = serializers.ImageField(allow_null=True, required=False)
+
     class Meta:
         model = User
         fields = "__all__"
