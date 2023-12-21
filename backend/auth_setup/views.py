@@ -10,11 +10,11 @@ from .serializers import  *
 from rest_framework import filters
 from django.core.exceptions import FieldError
 
-#UserSerializer, myTokenObtainPairSerializer,GoogleAuthSerializer
-from . import *
+
+from .models import *
 from rest_framework.generics import (
     ListCreateAPIView,RetrieveUpdateDestroyAPIView,
-    CreateAPIView,GenericAPIView,ListAPIView,UpdateAPIView)
+    CreateAPIView,GenericAPIView,ListAPIView,UpdateAPIView,RetrieveUpdateAPIView)
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.contrib.auth.tokens import default_token_generator
@@ -29,9 +29,6 @@ from rest_framework.decorators import action
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from rest_framework.permissions import IsAuthenticated
-
-
-
 # Create your views here.
 
 class myTokenObtainPairView(TokenObtainPairView):
@@ -64,7 +61,7 @@ class UserRegister(CreateAPIView):
             # Send verification email
             subject = 'Profcio | Activate Your Account'
             message = f'Hi {user.username}, Welcome To Profcio..! Click the link to activate your account: {verification_url}'
-            from_email = 'your@example.com'  # Replace with your email
+            from_email = 'sahalshalu830@gmail.com'
             recipient_list = [user.email]
 
             send_mail(subject, message, from_email, recipient_list)
@@ -279,7 +276,7 @@ class Authentication(APIView):
         return Response(content)
 
 class UserDetails(ListAPIView):
-    permission_classes =(IsAuthenticated,)
+    # permission_classes =(IsAuthenticated,)
 
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
@@ -293,19 +290,16 @@ class Userblock(APIView):
     def put(self,request,*args, **kwargs):
         # get value from url parameter
         value_to_update = kwargs.get('pk')
-        print(value_to_update,'>>>>>>>>>>>>>>>value_to_update<<<<<<<<<<<<<<<<<<<<<<')
         if value_to_update is None:
             return Response({'error':'Please Provide a Proper input.'},status=status.HTTP_400_BAD_REQUEST)
         try:
             #retrive user instance based on provided pk
             instance = User.objects.get(pk=value_to_update)
-            print(instance,'instance>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
         except User.DoesNotExist:
             return Response({'error':f'user with id={value_to_update} does not exist'},status=status.HTTP_404_NOT_FOUND)
         
         #toggle the value of is_active
         instance.is_active = not instance.is_active
-        print(instance)
         serializer = UserSerializer(instance,data=request.data,partial = True)
         if serializer.is_valid():
             serializer.save()
@@ -338,9 +332,30 @@ class UserProfile(generics.ListCreateAPIView):
             return Response(serializer.data)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-        
-class ServiceListCreateView(generics.ListCreateAPIView):
+
+class CategoryService(ListCreateAPIView):
+    queryset = ServiceCategory.objects.all()
+    serializer_class = ServiceCategorySerializer
+
+class CategoryRetrieveUpdateView(RetrieveUpdateAPIView):
+    queryset = ServiceCategory.objects.all()
+    serializer_class = ServiceCategorySerializer
+    
+
+class ServiceListCreateView(ListCreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['name','description','category']
+    search_fields = ['name', 'description', 'category']
+
+    
+class ServiceRetrieveUpdateView(RetrieveUpdateAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+
+
+# class ServiceCategoryChoicesView(APIView):
+    # def get(self, request):
+    #     categories = Service.get_category_choices()
+    #     return Response(categories, status=status.HTTP_200_OK)

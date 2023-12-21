@@ -27,22 +27,22 @@ class User(AbstractUser):
     description = models.TextField(null=True,blank=True)
     experience = models.IntegerField(blank=True,null=True)
     charge = models.IntegerField(blank=True,null=True)
+    
     USERNAME_FIELD = 'email'
 
     REQUIRED_FIELDS = ['username']
 
+class ServiceCategory(models.Model):
+    name = models.CharField(max_length=50,unique = True)
+
 
 class Service(models.Model):
-    CATEGORY =(
-        ("all_rounder","all_rounder"),
-        ("commercial","commercial"),
-        ("home","home"),
-    )
-
+   
     name = models.CharField(max_length=255)
     description = models.TextField()
-    category = models.CharField(max_length=20,choices=CATEGORY,default='home')
+    category = models.ForeignKey(ServiceCategory,on_delete=models.CASCADE)
     service_image =  models.ImageField(upload_to='profile',blank=True,null=True)
 
+    
 
 

@@ -1,7 +1,6 @@
 from  rest_framework import serializers
 from rest_framework_simplejwt.serializers import *
-from .models import User,Service
-
+from .models import User,Service,ServiceCategory
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -9,7 +8,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ['id','username','email','profile_photo','user_type','phone_number',
+                  'work','place','description','experience','charge']
         extra_kwargs ={
             'password' : {'write_only':True},
         }
@@ -30,7 +30,7 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
 class GoogleAuthSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields =('id','username','email','password','profile_image',
+        fields =('id','username','email','profile_image',
                  "phone_number",'user_type','is_google','is_active')
         extra_kwargs ={
             'password':{'write_only':True}
@@ -39,7 +39,7 @@ class GoogleAuthSerializer(serializers.ModelSerializer):
 class EditUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields =['id','username','email','password','profile_image','user_type',
+        fields =['id','username','email','profile_image','user_type',
                  "phone_number",'is_google','is_active']
         
 class EmployeedataSerializer(serializers.ModelSerializer):
@@ -47,8 +47,13 @@ class EmployeedataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = User
-        fields = ['id','username', 'password','email','profile_photo','user_type','phone_number','is_google',
+        fields = ['id','username','email','profile_photo','user_type','phone_number','is_google',
                   'work','place','description','experience','charge']
+
+class ServiceCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceCategory
+        fields = '__all__'
         
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:

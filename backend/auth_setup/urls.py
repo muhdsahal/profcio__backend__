@@ -11,16 +11,19 @@ urlpatterns = [
     path('register/',UserRegister.as_view(),name='register'),
     path('employeeregister/',EmployeeRegister.as_view(),name='EmployeeRegister'),
     
-    # path('verify/<str:uid64>/<str:token>/', VerifyUserView.as_view(),name='verify-user'), #email verification
     path('user_block_unblock/<int:pk>/',Userblock.as_view(),name='userblock'),
     path('googleauth/',GoogleAuthentication.as_view(),name='GoogleAuthentication'),
     path('auth/verify/<str:uidb64>/<str:token>/', VerifyUserView.as_view(), name='verify-user'),
     path('forgot_password/',ForgotPasswordView.as_view(),name='forgot_password'),
     path('reset_password/<str:uidb64>/<str:token>/',PasswordResetView.as_view(),name='reset_password'),
     path('userdetails/',UserDetails.as_view(),name='user_details'),
-    
+
     path('authentication/',Authentication.as_view(), name='Authentication'),
-    path('services/', ServiceListCreateView.as_view(), name='servicelistcreate'),
+    path('service_category/',CategoryService.as_view(),name='service_category'),
+    path('service_category/<int:pk>',CategoryRetrieveUpdateView.as_view(),name='service_category'),
+    path('services/', ServiceListCreateView.as_view(), name='service-list-create'),
+    path('services/<int:pk>/', ServiceRetrieveUpdateView.as_view(), name='service-retrieve-update'),
+    # path('service-categories/', ServiceCategoryChoicesView.as_view(), name='service-category-choices'),
 
     path('user_profile/<int:user_id>/',UserProfile.as_view(),name='userprofile'),
 
