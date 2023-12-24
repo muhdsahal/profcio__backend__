@@ -28,6 +28,7 @@ urlpatterns = [
     path('user_profile/<int:user_id>/',UserProfile.as_view(),name='userprofile'),
 
     path('employeelisting/',EmployeeProfileData.as_view(),name='EmployeeListing'),
+    path('employeelisting/<int:pk>/',EmployeeProfileDataWithId.as_view(),name='EmployeeListing'),
 
     path('register/',RegisterView.as_view(),name='rest_register'),
     path('login/',LoginView.as_view(),name='rest_login'),

@@ -309,9 +309,13 @@ class Userblock(APIView):
 
 
 class EmployeeProfileData(ListCreateAPIView):
-    queryset =User.objects.filter(user_type='employee')
+    queryset = User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
 
+class EmployeeProfileDataWithId(RetrieveUpdateAPIView):
+    queryset = User.objects.filter(user_type='employee')
+    serializer_class = EmployeedataSerializer
+    
 #userprofile class
 class UserProfile(generics.ListCreateAPIView):
     serializer_class = UserSerializer
