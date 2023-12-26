@@ -43,6 +43,9 @@ class Service(models.Model):
     category = models.ForeignKey(ServiceCategory,on_delete=models.CASCADE)
     service_image =  models.ImageField(upload_to='profile',blank=True,null=True)
 
-    
 
-
+class EmployeeBooking(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='booked_by')
+    employee = models.ForeignKey(User,on_delete=models.CASCADE, related_name='bookings')
+    booking_date = models.DateField()
+    created_date = models.DateField(auto_now=True,null=True)

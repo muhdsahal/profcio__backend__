@@ -1,6 +1,6 @@
 from  rest_framework import serializers
 from rest_framework_simplejwt.serializers import *
-from .models import User,Service,ServiceCategory
+from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -58,4 +58,9 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
+        fields = '__all__'
+
+class EmployeeBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeBooking
         fields = '__all__'

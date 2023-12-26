@@ -357,9 +357,23 @@ class ServiceRetrieveUpdateView(RetrieveUpdateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
+# class EmployeeBookingView(ListCreateAPIView):
+#     queryset = EmployeeBooking.objects.all()
+#     serializer_class = EmployeeBookingSerializer
 
+class EmployeeBookingView(APIView):
+    def get(self, request, emp_id):
+        queryset = EmployeeBooking.objects.filter(emp=emp_id)
+        serializer = EmployeeBookingSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, emp_id):
+        data = request.data
+        data['employee'] = emp_id  # Assign the emp_id to the 'employee' field in the request data
+        print(emp_id,"emp_idddddddddddddddddddddddd")
+        serializer = EmployeeBookingSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class ServiceCategoryChoicesView(APIView):
-    # def get(self, request):
-    #     categories = Service.get_category_choices()
-    #     return Response(categories, status=status.HTTP_200_OK)
