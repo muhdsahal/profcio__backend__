@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -29,6 +30,8 @@ from rest_framework.decorators import action
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 
 class myTokenObtainPairView(TokenObtainPairView):
@@ -127,10 +130,10 @@ class EmployeeRegister(CreateAPIView):
         # Handle file upload for profile photo
         profile_photo_file = request.data.get('profile_photo')
 
-        if profile_photo_file:
-            file_name = default_storage.save(f'images/profile/{profile_photo_file.name}', ContentFile(profile_photo_file.read()))
-            profile_photo_path = default_storage.url(file_name)
-            request.data['profile_photo'] = profile_photo_path
+        # if profile_photo_file:
+        #     file_name = default_storage.save(f'images/profile/{profile_photo_file.name}', ContentFile(profile_photo_file.read()))
+        #     profile_photo_path = default_storage.url(file_name)
+        #     request.data['profile_photo'] = profile_photo_path
 
         serializer = EmployeedataSerializer(data=request.data) 
          #call data from the Userserializer
@@ -361,19 +364,91 @@ class ServiceRetrieveUpdateView(RetrieveUpdateAPIView):
 #     queryset = EmployeeBooking.objects.all()
 #     serializer_class = EmployeeBookingSerializer
 
-class EmployeeBookingView(APIView):
+# class EmployeeDetailView(APIView):
+#     def get(self, request, emp_id):
+#         employee = get_object_or_404(User, id=emp_id)
+#         availability = WeeklyAvailability.objects.filter(employee=employee).values('day_of_week', 'is_available')
+#         serializer = EmployeedataSerializer(employee)
+#         return Response({**serializer.data, 'availability': availability})
+
+# class AvailableTimeSlotsView(APIView):
+#     def get(self, request, emp_id, date):
+#         employee = get_object_or_404(User, id=emp_id)
+#         # Check if any existing booking overlaps with the requested date
+#         existing_bookings = EmployeeBooking.objects.filter(booking_dates__contains=date.strftime('%Y-%m-%d'))
+#         is_available = WeeklyAvailability.objects.filter(
+#             employee=employee, day_of_week=date.weekday() + 1  # Adjust for weekday indexing
+#         ).exists() and not existing_bookings.exists()
+#         return Response({'is_available': is_available})
+
+# class EmployeeBookingView(APIView):
+#     def post(self, request, emp_id):
+#         data = request.data
+#         data['employee'] = emp_id
+#         serializer = EmployeeBookingSerializer(data=data)
+#         if serializer.is_valid():
+#             try:
+#                 selected_dates = self.validate_booking_dates(serializer.validated_data['booking_dates'])
+#                 if len(selected_dates) < 3 or len(selected_dates) > 7:
+#                     raise ValueError("Number of selected days must be between 3 and 7")
+#                 booking_dates = ','.join(selected_dates)
+#                 serializer.validated_data['booking_dates'] = booking_dates
+#                 serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+#             except Exception as e:
+#                 return Response({'error':
+ 
+#             str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def validate_booking_dates(self, booking_dates_str):
+#         selected_dates = []
+#         for date_str in booking_dates_str.split(','):
+#             selected_dates.append(datetime.datetime.strptime(date_str.strip(), '%Y-%m-%d').date())
+#         return selected_dates
+
+# ... other views for authentication, authorization, etc.
+ 
+
+class BookingEmployeeView(APIView):
     def get(self, request, emp_id):
-        queryset = EmployeeBooking.objects.filter(emp=emp_id)
+
+        queryset = EmployeeBooking.objects.filter(employee=emp_id)
         serializer = EmployeeBookingSerializer(queryset, many=True)
         return Response(serializer.data)
-    
-    def post(self, request, emp_id):
-        data = request.data
-        data['employee'] = emp_id  # Assign the emp_id to the 'employee' field in the request data
-        print(emp_id,"emp_idddddddddddddddddddddddd")
-        serializer = EmployeeBookingSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class EmployeeBookingSubmit(APIView):
+    
+    def post (self,request):
+        try:
+            user_id = self.request.data.get('userId')
+            employee_id = self.request.data.get('employeeId')
+            date_str = self.request.data.get('date')
+
+            date_str = str(date_str)
+
+            date_object = datetime.strptime(date_str, '%Y-%m-%d')
+
+            formatted_date = date_object.date()
+
+            print(date_str,'formatted_date')
+            existing_booking = EmployeeBooking.objects.filter(
+                user_id = user_id,
+                employee_id = employee_id,
+                booking_date = formatted_date
+            ).first()
+            
+            if existing_booking:
+                    return Response({"error": "Booking already exists for this date and plan."}, status=status.HTTP_400_BAD_REQUEST)
+
+            employee = get_object_or_404(User,id=employee_id)
+            user = get_object_or_404(User, id=user_id)
+
+            booking = EmployeeBooking(
+                user=user,employee=employee,booking_date=formatted_date)
+            booking.save()
+
+            return Response({"message": "Success"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

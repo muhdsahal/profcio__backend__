@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class myTokenObtainPairSerializer(TokenObtainPairSerializer):
+    
     @classmethod
     def get_token(cls,user):
         token = super().get_token(user)
@@ -24,7 +25,7 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['user_type'] =user.user_type
         token['is_active'] = user.is_active
         token['is_admin'] = user.is_superuser
-
+        print(user.is_superuser,user.is_active,user.email,'tO++++++E+++E=========>>>>>>>>>')
         return token
 
 class GoogleAuthSerializer(serializers.ModelSerializer):

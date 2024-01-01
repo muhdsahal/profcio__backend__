@@ -29,8 +29,11 @@ urlpatterns = [
 
     path('employeelisting/',EmployeeProfileData.as_view(),name='EmployeeListing'),
     path('employeelisting/<int:pk>/',EmployeeProfileDataWithId.as_view(),name='EmployeeListing'),
-    path('employeebooking/<int:emp_id>/book/',EmployeeBookingView.as_view(),name='employeebooking'),
-
+    # path('employees/<int:emp_id>/', EmployeeDetailView.as_view(), name='employee-detail'),
+    # path('employees/<int:emp_id>/available/<str:date>/', AvailableTimeSlotsView.as_view(), name='employee-available'),
+    path('employee/<int:emp_id>/book/', BookingEmployeeView.as_view(), name='employee_booking'),
+    path('employee/booking/register/', EmployeeBookingSubmit.as_view(), name='employee_booking_submit'),
+    
     
 
     path('register/',RegisterView.as_view(),name='rest_register'),

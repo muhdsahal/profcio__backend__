@@ -34,6 +34,9 @@ class User(AbstractUser):
 
 class ServiceCategory(models.Model):
     name = models.CharField(max_length=50,unique = True)
+    
+    def __str__(self):
+        return self.name
 
 
 class Service(models.Model):
@@ -45,7 +48,33 @@ class Service(models.Model):
 
 
 class EmployeeBooking(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='booked_by')
-    employee = models.ForeignKey(User,on_delete=models.CASCADE, related_name='bookings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_by')
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     booking_date = models.DateField()
-    created_date = models.DateField(auto_now=True,null=True)
+    price = models.IntegerField(null=True)
+    created_date = models.DateField(auto_now=True, null=True)
+    is_booked = models.BooleanField(default = False)
+
+    
+
+
+# WEEKDAYS_CHOICES = (
+#     (1, 'Monday'),
+#     (2, 'Tuesday'),
+#     (3, 'Wednesday'),
+#     (4, 'Thursday'),
+#     (5, 'Friday'),
+#     (6, 'Saturday'),
+#     (7, 'Sunday'),
+# )
+
+# class WeeklyAvailability(models.Model):
+#     employee = models.ForeignKey(User, on_delete=models.CASCADE)
+#     day_of_week = models.IntegerField(choices=WEEKDAYS_CHOICES)
+#     is_available = models.BooleanField()
+
+# class EmployeeBooking(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_by')
+#     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+#     booking_date = models.DateField()
+#     created_date = models.DateField(auto_now=True, null=True)
