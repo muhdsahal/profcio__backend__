@@ -25,7 +25,6 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['user_type'] =user.user_type
         token['is_active'] = user.is_active
         token['is_admin'] = user.is_superuser
-        print(user.is_superuser,user.is_active,user.email,'tO++++++E+++E=========>>>>>>>>>')
         return token
 
 class GoogleAuthSerializer(serializers.ModelSerializer):
@@ -60,8 +59,13 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
-
+class CustomUserserializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','email','phone_number']
 class EmployeeBookingSerializer(serializers.ModelSerializer):
+    userDetails = CustomUserserializer(source = 'user', read_only = True)
+    employeeDetails = CustomUserserializer(source = 'employee', read_only = True)
     class Meta:
         model = EmployeeBooking
         fields = '__all__'
