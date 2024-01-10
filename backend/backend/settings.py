@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'auth_setup',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -48,6 +47,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'verify_email.apps.VerifyEmailConfig',
 
+    #apps
+    'auth_setup',
+    'service',
+    'employee',
     # social authentication
     'allauth', # pip install django-allauth==0.52.0
     'allauth.account',

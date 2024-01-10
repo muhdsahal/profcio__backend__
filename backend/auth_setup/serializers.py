@@ -50,22 +50,18 @@ class EmployeedataSerializer(serializers.ModelSerializer):
         fields = ['id','username','email','profile_photo','user_type','phone_number','is_google',
                   'work','place','description','experience','charge']
 
-class ServiceCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServiceCategory
-        fields = '__all__'
-        
-class ServiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Service
-        fields = '__all__'
-class CustomUserserializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username','email','phone_number']
-class EmployeeBookingSerializer(serializers.ModelSerializer):
-    userDetails = CustomUserserializer(source = 'user', read_only = True)
-    employeeDetails = CustomUserserializer(source = 'employee', read_only = True)
-    class Meta:
-        model = EmployeeBooking
-        fields = '__all__'
+
+
+
+# class CustomUserserializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['username','email','phone_number']
+
+# class EmployeeBookingSerializer(serializers.ModelSerializer):
+#     userDetails = CustomUserserializer(source = 'user', read_only = True)
+#     employeeDetails = CustomUserserializer(source = 'employee', read_only = True)
+#     class Meta:
+#         model = EmployeeBooking
+#         fields = '__all__'
+ 

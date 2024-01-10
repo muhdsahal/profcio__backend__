@@ -23,8 +23,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/',include('auth_setup.urls')),
-    # path('verification/', include('verify_email.urls')),
-    # path('account_inactive/', account_inactive, name='account_inactive'),
+    path('service/',include('service.urls')),
+    path('employee/',include('employee.urls')),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -9,10 +9,8 @@ from dj_rest_auth.views import LoginView,LogoutView,UserDetailsView
 urlpatterns = [
     path('token/',myTokenObtainPairView.as_view(),name='token_obtain_pair'),
     path('token/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
- 
     path('register/',UserRegister.as_view(),name='register'),
     path('employeeregister/',EmployeeRegister.as_view(),name='EmployeeRegister'),
-    
     path('user_block_unblock/<int:pk>/',Userblock.as_view(),name='userblock'),
     path('googleauth/',GoogleAuthentication.as_view(),name='GoogleAuthentication'),
     path('auth/verify/<str:uidb64>/<str:token>/', VerifyUserView.as_view(), name='verify-user'),
@@ -22,11 +20,6 @@ urlpatterns = [
     path('password_reset_confirm_validation/<str:uidb64>/<str:token>/',VerifyReset.as_view(),name='password_reset_confirm_validation'),
 
     path('authentication/',Authentication.as_view(), name='Authentication'),
-    path('service_category/',CategoryService.as_view(),name='service_category'),
-    path('service_category/<int:pk>',CategoryRetrieveUpdateView.as_view(),name='service_category'),
-    path('services/', ServiceListCreateView.as_view(), name='service-list-create'),
-    path('services/<int:pk>/', ServiceRetrieveUpdateView.as_view(), name='service-retrieve-update'),
-    # path('service-categories/', ServiceCategoryChoicesView.as_view(), name='service-category-choices'),
 
     path('password_change/',PassWordChange.as_view(),name='password_change'),
     path('user_profile/<int:user_id>/',UserProfile.as_view(),name='userprofile'),
@@ -34,11 +27,11 @@ urlpatterns = [
     path('employeelisting/',EmployeeProfileData.as_view(),name='EmployeeListing'),
     path('employeelisting/<int:pk>/',EmployeeProfileDataWithId.as_view(),name='EmployeeListing'),
     
-    path('employee_bookings_list/', EmployeeBookingList.as_view(), name='employee_bookings_list'),
-    # path('employee_bookings_list/<int:id>/', EmployeeBookingList.as_view(), name='employee_bookings_list'),
-    path('employee/<int:emp_id>/book/', BookingEmployeeView.as_view(), name='employee_booking'),
-    path('employee/booking/register/', EmployeeBookingSubmit.as_view(), name='employee_booking_submit'),
-    path('booking/payment/',StripePayment.as_view(), name='stripe-payment'),
+    # path('employee_bookings_list/', EmployeeBookingList.as_view(), name='employee_bookings_list'),
+    # # path('employee_bookings_list/<int:id>/', EmployeeBookingList.as_view(), name='employee_bookings_list'),
+    # path('employee/<int:emp_id>/book/', BookingEmployeeView.as_view(), name='employee_booking'),
+    # path('employee/booking/register/', EmployeeBookingSubmit.as_view(), name='employee_booking_submit'),
+    # path('booking/payment/',StripePayment.as_view(), name='stripe-payment'),
     
 
     path('register/',RegisterView.as_view(),name='rest_register'),
