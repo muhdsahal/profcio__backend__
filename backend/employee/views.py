@@ -100,7 +100,32 @@ class EmployeeBookingList(ListAPIView):
     queryset = EmployeeBooking.objects.all()
     serializer_class = EmployeeBookingSerializer
 
-class EmployeeBookingListViewById(RetrieveUpdateAPIView):
-    queryset = EmployeeBooking.objects.all()
-    serializer_class = EmployeeBookingSerializer
+# class EmployeeBookingListViewById(RetrieveUpdateAPIView):
+#     queryset = EmployeeBooking.objects.all()
+#     serializer_class = EmployeeBookingSerializer
 
+class BookedByUserID(APIView):
+    def get (self,request,*args, **kwargs):
+        user_id = kwargs.get('pk')
+        try:
+            bookings = EmployeeBooking.objects.filter(user=user_id)
+        except :
+            pass
+        serializer = EmployeeBookingSerializer(bookings,many=True)
+        if serializer:
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+        
+class BookedByEmployeeID(APIView):
+    def get (self,request,*args, **kwargs):
+        emp_id = kwargs.get('pk')
+        try:
+            bookings = EmployeeBooking.objects.filter(user=emp_id)
+        except :
+            pass
+        serializer = EmployeeBookingSerializer(bookings,many=True)
+        if serializer:
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)

@@ -6,6 +6,7 @@ urlpatterns = [
     path('employee/booking/register/', EmployeeBookingSubmit.as_view(), name='employee_booking_submit'),
     path('booking/payment/',StripePayment.as_view(), name='stripe-payment'),
     path('employee_bookings_list/', EmployeeBookingList.as_view(), name='employee_bookings_list'),
-    path('employee_bookings_list/<int:pk>/', EmployeeBookingListViewById.as_view(), name='employee_bookings_list'),
+    # path('employee_bookings_list/<int:pk>/', EmployeeBookingListViewById.as_view(), name='employee_bookings_list'),
+    path('booked_list_user/<int:pk>/', BookedByUserID.as_view(), name='employee_bookings_list'),
+    path('booked_list_employee/<int:pk>/', BookedByEmployeeID.as_view(), name='employee_bookings_list'),
 ]
-# 

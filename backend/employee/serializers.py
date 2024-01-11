@@ -6,7 +6,7 @@ from .models import EmployeeBooking
 class CustomUserserializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username","email","phone_number"]
+        fields = ["id","username","email","phone_number"]
     
 class EmployeeBookingSerializer(serializers.ModelSerializer):
     userDetails = CustomUserserializer(source = 'user', read_only = True)

@@ -237,7 +237,7 @@ class VerifyReset(APIView):
             user = User.objects.get(pk=uid)
             
             context = user.user_type
-            print(context,'usertype///////usertype/////usertype')
+            # print(context,'usertype///////usertype/////usertype')
             if context == 'employee':
                 redirect_url = f'http://localhost:5173/employee/reset_password/{uidb64}/{token}'
             else:
@@ -303,9 +303,13 @@ def create_jwt_pair_token(user):
     }
 
 class Authentication(APIView):
-    permission_classes =(IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     def get(self,request):
-        content={'user':str(request.user),'userid':str(request.user.id),'email':str(request.user.email),'is_active':str(request.user.is_active)}
+        content={'user':str(request.user),
+                'userid':str(request.user.id),
+                'email':str(request.user.email),
+                'is_active':str(request.user.is_active)
+        }
         return Response(content)
 
 class UserDetails(ListAPIView):
