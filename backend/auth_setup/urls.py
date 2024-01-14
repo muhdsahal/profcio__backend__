@@ -14,17 +14,17 @@ urlpatterns = [
     path('googleauth/',GoogleAuthentication.as_view(),name='GoogleAuthentication'),
     path('auth/verify/<str:uidb64>/<str:token>/', VerifyUserView.as_view(), name='verify-user'),
     path('password_reset/',PasswordResetAPIView.as_view(), name='password_reset'),
+    path('password_change/',PassWordChange.as_view(),name='password_change'),
     # path('password_reset_confirm/<str:uidb64>/<str:token>/', PasswordResetAPIView.as_view(), name='password_reset_confirm'),
     path('userdetails/',UserDetails.as_view(),name='user_details'),
     path('password_reset_confirm_validation/<str:uidb64>/<str:token>/',VerifyReset.as_view(),name='password_reset_confirm_validation'),
     path('authentication/',Authentication.as_view(), name='Authentication'),
-    path('password_change/',PassWordChange.as_view(),name='password_change'),
     path('user_profile/<int:user_id>/',UserProfile.as_view(),name='userprofile'),
     path('employeelisting/',EmployeeProfileData.as_view(),name='EmployeeListing'),
     path('employeelisting/<int:pk>/',EmployeeProfileDataWithId.as_view(),name='EmployeeListing'),
     path('register/',RegisterView.as_view(),name='rest_register'),
     path('login/',LoginView.as_view(),name='rest_login'),
-    path('logout/',UserDetailsView.as_view(),name='rest_user_details'),
+    path('logout/',LogoutView.as_view(),name='logout'),
 
     
 ]

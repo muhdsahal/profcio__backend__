@@ -121,7 +121,7 @@ class BookedByEmployeeID(APIView):
     def get (self,request,*args, **kwargs):
         emp_id = kwargs.get('pk')
         try:
-            bookings = EmployeeBooking.objects.filter(user=emp_id)
+            bookings = EmployeeBooking.objects.filter(employee=emp_id)
         except :
             pass
         serializer = EmployeeBookingSerializer(bookings,many=True)

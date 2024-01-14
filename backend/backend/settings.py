@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount', # add if you want social authentication
 
     'dj_rest_auth', # pip install "dj-rest-auth[with_social]==4.0.0"
-    'dj_rest_auth.registration'
+    'dj_rest_auth.registration',
+    # 'rest_framework_simplejwt.token_blacklist',
  
 ]
 
@@ -81,17 +82,20 @@ AUTH_USER_MODEL = 'auth_setup.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
    
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=60),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
+
     "ALGORITHM": "HS256",
     "VERIFYING_KEY": "",
     "AUDIENCE": None,

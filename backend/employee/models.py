@@ -3,8 +3,6 @@ from auth_setup.models import User
 
 # Create your models here.
 class EmployeeBooking(models.Model):
-     
-
     BOOKING_STATUS =(
         ('pending','pending'),
         ('ongoing','ongoing'),
