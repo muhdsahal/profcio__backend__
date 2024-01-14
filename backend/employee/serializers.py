@@ -1,6 +1,6 @@
 from auth_setup.models import User
 from rest_framework import serializers
-from .models import EmployeeBooking
+from .models import EmployeeBooking,EmployeeAbsence
 
 
 class CustomUserserializer(serializers.ModelSerializer):
@@ -14,3 +14,8 @@ class EmployeeBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeBooking
         fields = '__all__'
+
+class EmployeeAbsenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeAbsence
+        fields = ['id', 'user', 'employee', 'absence_date']

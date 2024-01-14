@@ -18,3 +18,11 @@ class EmployeeBooking(models.Model):
     def save(self,*args, **kwargs):
         self.price = self.employee.charge
         super().save(*args, **kwargs)
+
+class EmployeeAbsence(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='absences')
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='absentees')
+    absence_date = models.DateField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)

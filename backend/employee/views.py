@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from datetime import datetime
 from auth_setup.models import User
-from .models import EmployeeBooking
-from .serializers import EmployeeBookingSerializer
+from .models import EmployeeBooking,EmployeeAbsence
+from .serializers import EmployeeBookingSerializer,EmployeeAbsenceSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import stripe
 from django.shortcuts import get_object_or_404
 from rest_framework.generics  import RetrieveUpdateAPIView,ListAPIView
-
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 
@@ -23,6 +24,19 @@ class BookingEmployeeView(APIView):
 # stripe.api_key = config('STRIPE_SECRET_KEY')
 stripe.api_key = 'sk_test_51OFqIQSJiD5G4hPsOp9WDdHeFzGx7va82AmGoZfCXQWfdZILiQgIRY87lYDMQxiy4UoPzb79c7LopwQgNW6aNFdH00cGrA0FV7'
 
+@api_view(['POST'])
+def create_employee_absence(request):
+    serializer = EmployeeAbsenceSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_employee_absences(request, emp_id):
+    absences = EmployeeAbsence.objects.filter(employee_id=emp_id)
+    serializer = EmployeeAbsenceSerializer(absences, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class StripePayment(APIView):
     def post (self,request):
