@@ -45,7 +45,7 @@ class StripePayment(APIView):
             userId = data.get('userId')
             empId = data.get('empId')
             date = data.get('date')
-
+            # print(userId,empId,date,'allllaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             # print(userId,empId,date,'userId,empId,dateuserId       StripePayment')
             # You can use the received data to customize the Stripe session creation
             success_url = f"http://localhost:5173/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
@@ -88,8 +88,8 @@ class EmployeeBookingSubmit(APIView):
             formatted_date = date_object.date()
 
             existing_booking = EmployeeBooking.objects.filter(
-                user_id=user_id,
-                employee_id=employee_id,
+                user=user_id,
+                employee=employee_id,
                 booking_date=formatted_date
             ).first()
 

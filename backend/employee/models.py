@@ -15,6 +15,7 @@ class EmployeeBooking(models.Model):
     created_date = models.DateField(auto_now=True, null=True)
     is_booked = models.BooleanField(default = False)
     booking_status = models.CharField(max_length = 30,choices=BOOKING_STATUS,default='pending')
+    
     def save(self,*args, **kwargs):
         self.price = self.employee.charge
         super().save(*args, **kwargs)

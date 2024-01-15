@@ -31,6 +31,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
 import stripe
 from decouple import config
 # Create your views here.
@@ -269,32 +270,49 @@ class GoogleAuthentication(APIView):
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
-        
 
+        try:
+            # Validate email format
+            User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'status': 'error', 'msg': 'Invalid email'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the user already exists with Google authentication
         if not User.objects.filter(email=email, is_google=True).exists():
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
+            # If not, attempt to create a new user
+            try:
+                serializer = GoogleAuthSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
                 user = serializer.save()
                 user.user_type = "user"
                 user.is_active = True
                 user.is_google = True
                 user.set_password(password)
                 user.save()
+            except IntegrityError:
+                # Handle integrity error (e.g., duplicate email)
+                return Response({'status': 'error', 'msg': 'User with this email already exists'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            except ValidationError as e:
+                # Handle validation error
+                return Response({'status': 'error', 'msg': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Authenticate user
         user = authenticate(email=email, password=password)
 
         if user is not None:
+            # User authenticated, generate JWT token
             token = create_jwt_pair_token(user)
             response_data = {
                 'status': 'Success',
-                'msg': 'Registration Successfully',
+                'msg': 'Authentication Successful',
                 'token': token,
             }
-
-            return Response(response_data, status=status.HTTP_201_CREATED)
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'error', 'msg': 'Authentication failed'})
-
+            # Authentication failed
+            return Response({'status': 'error', 'msg': 'Authentication failed'},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)

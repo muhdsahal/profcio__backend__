@@ -33,18 +33,13 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
 
+class Notifications(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    text=models.CharField(max_length=200)
+    created_at=models.DateTimeField(auto_now_add=True)
+    is_read=models.BooleanField(default=False)
 
+    def __str__(self):
 
-# class EmployeeBooking(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_by')
-#     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
-#     booking_date = models.DateField()
-#     price = models.IntegerField(null=True)
-#     created_date = models.DateField(auto_now=True, null=True)
-#     is_booked = models.BooleanField(default = False)
-
-#     def save(self,*args, **kwargs):
-#         self.price = self.employee.charge
-#         super().save(*args, **kwargs)
-
+        return self.text
 
