@@ -24,8 +24,7 @@ urlpatterns = [
     path('auth/',include('auth_setup.urls')),
     path('service/',include('service.urls')),
     path('employee/',include('employee.urls')),
-    path('token/',jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
-    path('token/refresh/',jwt_views.TokenRefreshView.as_view(),name ='token_refresh')
+
           
          
 

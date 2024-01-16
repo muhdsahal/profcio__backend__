@@ -34,6 +34,10 @@ from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 import stripe
 from decouple import config
+from social_django.utils import psa
+from django.contrib.auth import get_user_model
+import requests
+
 # Create your views here.
 
 class myTokenObtainPairView(TokenObtainPairView):
@@ -267,113 +271,117 @@ class VerifyReset(APIView):
 
 
 
-# class GoogleSignup(APIView):
-#     def post(self, request):
-#         email = request.data.get('email')
-#         if not User.objects.filter(email=email, is_google=True).exists():
-#             serializer = GoogleAuthSerializer(data=request.data)
-#             serializer.is_valid(raise_exception=True)
-#             user = serializer.save()
-#             user.user_type = "user"
-#             user.is_active = True
-#             user.is_google = True
-#             user.save()
-#             data = {
-#                 "Text": "Your google SignUp successfully!",
-#                 "signup": "signup",
-#                 "status": 200,
-#                 }
-#             return Response(data=data)
-#         if User.objects.filter(email=email).exists():
-#             data = {
-#                 "Text": "This Email alredy exist!",
-#                 "status": 403,
-#             }
-#             return Response(data=data)
-#         else:
-#             data = {"Text":serializer.errors,"status":404}
-#             return Response(data=data)
-
-# class GoogleLogin(APIView):
-#     def post (self,request):
-#         email = request.data.get("email")
-
-#         if User.objects.filter(email=email).exists():
-#             access_token = request.data.get("access_token")
-#             GooGle_Url = config("GOOGLE_VERIFY")
-#             get_data = f"{GooGle_Url}access_token={access_token}"
-#             response = request.data.get(get_data)
-
-#         if response.status_code == 200:
-#             user_data = response.json()
-#             check_email = user_data["email"]
-#             if check_email == email:
-#                 user = User.objects.get(email=email)
-#                 token = RefreshToken.for_user(user)
-#                 token["email"] = user.email
-#                 token["is_active"] = user.is_active
-#                 token["is_superuser"] = user.is_superuser
-#                 token["user_type"] = user.user_type
-#                 token["is_google"] = user.is_google
-#                 result_data = {
-#                     "refresh" :str(token),
-#                     "access" :(token.access_token),
-#                 }
-#                 if user.is_active:
-#                     data = {
-#                         "message": "Your Login successfully! ",
-#                         "status": 201,
-#                         "token": result_data,
-#                     }
-#                 else:
-#                     data = {
-#                         "message": "Your Account has been blocked ! ",
-#                         "status": 202,
-#                         "token": result_data,
-#                     }
-#                 return Response(data=data)
-#             else:
-#                 data = {
-#                     "message": response.text,
-#                     "status": 406,
-#                 }
-#                 return Response(data=data)
-#         else:
-#             data = {
-#                 "message": "This Email have no account please Create new account! ",
-#                 "status": 403,
-#             }
-#             return Response(data=data)
-
-class GoogleAuthentication(APIView):
+class GoogleSignup(APIView):
     def post(self, request):
         email = request.data.get('email')
-        password = request.data.get('password')
+        if not User.objects.filter(email=email).exists():
+            serializer = GoogleAuthSerializer(data=request.data)
+            if serializer.is_valid():
+                user = serializer.save()
+            user.user_type = "user"
+            user.is_active = True
+            user.is_google = True
+            user.save()
+            data = {
+                "Text": "Your google SignUp successfully!",
+                "signup": "signup",
+                "status": 200,
+                }
+            return Response(data=data)
+        if User.objects.filter(email=email).exists():
+            data = {
+                "Text": "This Email alredy exist!",
+                "status": 403,
+            }
+            return Response(data=data)
+        else:
+            data = {"Text":serializer.errors,"status":404}
+            return Response(data=data)
+
+class GoogleLogin(APIView):
+     def post(self, request):
+        email = request.data.get("email")
+
+        if User.objects.filter(email=email).exists():
+            access_token = request.data.get("access_token")
+            Googleurl = config("GOOGLE_VERIFY")
+            get_data = f"{Googleurl}access_token={access_token}"
+            response = requests.get(get_data)
+
+            if response.status_code == 200:
+                user_data = response.json()
+                check_email = user_data["email"]
+                if check_email == email:
+                    user = User.objects.get(email=email)
+                    token = RefreshToken.for_user(user)
+                    token["email"] = user.email
+                    token["is_active"] = user.is_active
+                    token["is_superuser"] = user.is_superuser
+                    token["user_type"] = user.user_type
+                    token["is_google"] = user.is_google
+                    dataa = {
+                        "refresh": str(token),
+                        "access": str(token.access_token),
+                    }
+
+                    if user.is_active:
+                        data = {
+                            "message": "Your Login successfully! ",
+                            "status": 201,
+                            "token": dataa,
+                        }
+                    else:
+                        data = {
+                            "message": "Your Account has been blocked ! ",
+                            "status": 202,
+                            "token": dataa,
+                        }
+
+                    return Response(data=data)
+            else:
+                data = {
+                    "message": response.text,
+                    "status": 406,
+                }
+                return Response(data=data)
+        else:
+            data = {
+                "message": "This Email have no account please Create new account! ",
+                "status": 403,
+            }
+            return Response(data=data)
+
+
+# class GoogleAuthentication(APIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         password = request.data.get('password')
         
 
-        if not User.objects.filter(email=email, is_google=True).exists():
-            serializer = GoogleAuthSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                user = serializer.save()
-                user.user_type = "user"
-                user.is_active = True
-                user.is_google = True
-                user.set_password(password)
-                user.save()
+#         if not User.objects.filter(email=email, is_google=True).exists():
+#             serializer = UserSerializer(data=request.data)
+#             if serializer.is_valid(raise_exception=True):
+#                 user = serializer.save()
+#                 user.user_type = "user"
+#                 user.is_active = True
+#                 user.is_google = True
+#                 user.set_password(password)
+#                 user.save()
 
-        user = authenticate(email=email,password=password)
+#         user = authenticate(email=email,password=password)
 
-        if user is not None:
-            token = create_jwt_pair_token(user)
-            response_data = {
-                'status': 'Success',
-                'msg': 'Registration Successfully',
-                'token': token,
-            }
+#         if user is not None:
+#             token = create_jwt_pair_token(user)
+#             response_data = {
+#                 'status': 'Success',
+#                 'msg': 'Registration Successfully',
+#                 'token': token,
+#             }
 
-            return Response(response_data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'status': 'error', 'msg': 'Authentication failed'})
+#             return Response(response_data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response({'status': 'error', 'msg': 'Authentication failed'})
+
 
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)

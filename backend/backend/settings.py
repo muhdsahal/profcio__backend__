@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'allauth', # pip install django-allauth==0.52.0
     'allauth.account',
     'allauth.socialaccount', # add if you want social authentication
+    # 'social_django',
 
     'dj_rest_auth', # pip install "dj-rest-auth[with_social]==4.0.0"
     'dj_rest_auth.registration',
@@ -74,7 +75,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'social_django.middleware.SocialAuthExceptionMiddleware',
+
 ]
+
+# AUTHENTICATION_BACKENDS = [
+#     'social_core.backends.google.GoogleOAuth2',
+#     'django.contrib.auth.backends.ModelBackend',
+#     'social_core.backends.django.DjangoOAuth2',  # Use this if you don't have a custom backend
+# ]
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1026084967688-s5uu23t8b7mc4rq25ae3is6sm32jiooo.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 ROOT_URLCONF = 'backend.urls'
  

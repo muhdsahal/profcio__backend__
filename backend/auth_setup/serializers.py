@@ -28,14 +28,38 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class GoogleAuthSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        style={"input_type": "passsword"}, write_only=True
+    )
+    # class Meta:
+    #     model = User
+    #     fields =('id','username','email','profile_photo',
+    #              "phone_number",'user_type','is_google','is_active','password')
+    #     # extra_kwargs ={
+    #     #     'password':{'write_only':True}
+    #     # }
+    # password2 = serializers.CharField(
+    #     style={"input_type": "passsword"}, write_only=True
+    # )
+
     class Meta:
         model = User
-        fields =('id','username','email','profile_image',
-                 "phone_number",'user_type','is_google','is_active')
-        extra_kwargs ={
-            'password':{'write_only':True}
-        }
+        fields = "__all__"
 
+    def save(self):
+        user = User(
+            username=self._validated_data["username"],
+            email=self._validated_data["email"],
+            password=self._validated_data["password"],
+            is_active=False,
+        )
+        password = self._validated_data["password"]
+        
+        if not password :
+            raise serializers.ValidationError({"password": "password does not match"})
+        user.set_password(password)
+        user.save()
+        return user    
 class EditUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
