@@ -65,7 +65,7 @@ class UserRegister(CreateAPIView):
             # Send verification email
             subject = 'Profcio | Activate Your Account'
             message = f'Hi {user.username}, Welcome To Profcio..! Click the link to activate your account: {verification_url}'
-            from_email = 'sahalshalu830@gmail.com'
+            from_email = 'profcioweb@gmail.com'
             recipient_list = [user.email]
 
             send_mail(subject, message, from_email, recipient_list)
@@ -157,7 +157,7 @@ class EmployeeRegister(CreateAPIView):
             subject  = 'Profcio | Activate Your Account'
             message = f'Hi {user}, Welcome To Profcio..! click the following link to activate your  account :{request.build_absolute_uri(verification_url)}'
             
-            from_email = 'sahalshalu830@gmail.com'
+            from_email = 'profcioweb@gmail.com'
             recipient_list = [user.email]
 
             try:
@@ -203,7 +203,7 @@ class PasswordResetAPIView(APIView):
         message = f'Hi {user} click the following link to reset your  password :{reset_url}'
         
 
-        from_email = 'sahalshalu830@gmail.com'
+        from_email = 'profcioweb@gmail.com'
         recipient_list = [user.email]
         # print(subject, message, from_email, recipient_list)
         send_mail(subject, message, from_email, recipient_list)
@@ -266,53 +266,114 @@ class VerifyReset(APIView):
             return JsonResponse({'error': message}, status=500)
 
 
+
+# class GoogleSignup(APIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         if not User.objects.filter(email=email, is_google=True).exists():
+#             serializer = GoogleAuthSerializer(data=request.data)
+#             serializer.is_valid(raise_exception=True)
+#             user = serializer.save()
+#             user.user_type = "user"
+#             user.is_active = True
+#             user.is_google = True
+#             user.save()
+#             data = {
+#                 "Text": "Your google SignUp successfully!",
+#                 "signup": "signup",
+#                 "status": 200,
+#                 }
+#             return Response(data=data)
+#         if User.objects.filter(email=email).exists():
+#             data = {
+#                 "Text": "This Email alredy exist!",
+#                 "status": 403,
+#             }
+#             return Response(data=data)
+#         else:
+#             data = {"Text":serializer.errors,"status":404}
+#             return Response(data=data)
+
+# class GoogleLogin(APIView):
+#     def post (self,request):
+#         email = request.data.get("email")
+
+#         if User.objects.filter(email=email).exists():
+#             access_token = request.data.get("access_token")
+#             GooGle_Url = config("GOOGLE_VERIFY")
+#             get_data = f"{GooGle_Url}access_token={access_token}"
+#             response = request.data.get(get_data)
+
+#         if response.status_code == 200:
+#             user_data = response.json()
+#             check_email = user_data["email"]
+#             if check_email == email:
+#                 user = User.objects.get(email=email)
+#                 token = RefreshToken.for_user(user)
+#                 token["email"] = user.email
+#                 token["is_active"] = user.is_active
+#                 token["is_superuser"] = user.is_superuser
+#                 token["user_type"] = user.user_type
+#                 token["is_google"] = user.is_google
+#                 result_data = {
+#                     "refresh" :str(token),
+#                     "access" :(token.access_token),
+#                 }
+#                 if user.is_active:
+#                     data = {
+#                         "message": "Your Login successfully! ",
+#                         "status": 201,
+#                         "token": result_data,
+#                     }
+#                 else:
+#                     data = {
+#                         "message": "Your Account has been blocked ! ",
+#                         "status": 202,
+#                         "token": result_data,
+#                     }
+#                 return Response(data=data)
+#             else:
+#                 data = {
+#                     "message": response.text,
+#                     "status": 406,
+#                 }
+#                 return Response(data=data)
+#         else:
+#             data = {
+#                 "message": "This Email have no account please Create new account! ",
+#                 "status": 403,
+#             }
+#             return Response(data=data)
+
 class GoogleAuthentication(APIView):
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
+        
 
-        try:
-            # Validate email format
-            User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({'status': 'error', 'msg': 'Invalid email'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Check if the user already exists with Google authentication
         if not User.objects.filter(email=email, is_google=True).exists():
-            # If not, attempt to create a new user
-            try:
-                serializer = GoogleAuthSerializer(data=request.data)
-                serializer.is_valid(raise_exception=True)
+            serializer = GoogleAuthSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
                 user.user_type = "user"
                 user.is_active = True
                 user.is_google = True
                 user.set_password(password)
                 user.save()
-            except IntegrityError:
-                # Handle integrity error (e.g., duplicate email)
-                return Response({'status': 'error', 'msg': 'User with this email already exists'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            except ValidationError as e:
-                # Handle validation error
-                return Response({'status': 'error', 'msg': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Authenticate user
-        user = authenticate(email=email, password=password)
+        user = authenticate(email=email,password=password)
 
         if user is not None:
-            # User authenticated, generate JWT token
             token = create_jwt_pair_token(user)
             response_data = {
                 'status': 'Success',
-                'msg': 'Authentication Successful',
+                'msg': 'Registration Successfully',
                 'token': token,
             }
-            return Response(response_data, status=status.HTTP_200_OK)
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
         else:
-            # Authentication failed
-            return Response({'status': 'error', 'msg': 'Authentication failed'},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'status': 'error', 'msg': 'Authentication failed'})
 
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)

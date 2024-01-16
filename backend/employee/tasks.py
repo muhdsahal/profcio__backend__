@@ -13,6 +13,6 @@ def BookingSendingMail(username,employeeName,bookedDate,userEmail):
     message = f"""Hy {username}. Your Booking has been successfully.
             Your selected employee: {employeeName} in {bookedDate} day.
             Thank you for choosing Profcio ."""
-    from_email = "sahalshalu830@gmail.com"
+    from_email = "profcioweb@gmail.com"
     recipient_list = [userEmail] 
     send_mail(subject,message, from_email, recipient_list, fail_silently=True)

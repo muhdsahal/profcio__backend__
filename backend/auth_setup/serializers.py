@@ -30,7 +30,7 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
 class GoogleAuthSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields =('id','username','password','email','profile_image',
+        fields =('id','username','email','profile_image',
                  "phone_number",'user_type','is_google','is_active')
         extra_kwargs ={
             'password':{'write_only':True}
