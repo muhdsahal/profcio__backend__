@@ -9,6 +9,7 @@ urlpatterns = [
     # path('employee_bookings_list/<int:pk>/', EmployeeBookingListViewById.as_view(), name='employee_bookings_list'),
     path('booked_list_user/<int:pk>/', BookedByUserID.as_view(), name='employee_bookings_list'),
     path('booked_list_employee/<int:pk>/', BookedByEmployeeID.as_view(), name='employee_bookings_list'),
+    path('booking_status/<int:pk>/', BookingStatusUpdate.as_view(), name='booking_status'),
     path('employee_absence/', create_employee_absence, name='create_employee_absence'),
     path('employee_absences/<int:emp_id>/', get_employee_absences, name='get_employee_absences'),
 

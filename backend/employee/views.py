@@ -2,7 +2,7 @@ from django.shortcuts import render
 from datetime import datetime
 from auth_setup.models import User
 from .models import EmployeeBooking,EmployeeAbsence
-from .serializers import EmployeeBookingSerializer,EmployeeAbsenceSerializer
+from .serializers import BookingStatusSerializer, EmployeeBookingSerializer,EmployeeAbsenceSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -113,10 +113,9 @@ class EmployeeBookingSubmit(APIView):
 class EmployeeBookingList(ListAPIView):
     queryset = EmployeeBooking.objects.all()
     serializer_class = EmployeeBookingSerializer
+    
 
-# class EmployeeBookingListViewById(RetrieveUpdateAPIView):
-#     queryset = EmployeeBooking.objects.all()
-#     serializer_class = EmployeeBookingSerializer
+
 
 class BookedByUserID(APIView):
     def get (self,request,*args, **kwargs):
@@ -130,6 +129,11 @@ class BookedByUserID(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
+class BookingStatusUpdate(RetrieveUpdateAPIView):
+    queryset = EmployeeBooking.objects.all()
+    serializer_class = BookingStatusSerializer
+    
         
 class BookedByEmployeeID(APIView):
     def get (self,request,*args, **kwargs):

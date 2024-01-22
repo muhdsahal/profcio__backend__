@@ -4,6 +4,8 @@ from rest_framework.generics import ListCreateAPIView,RetrieveUpdateAPIView
 from .models import ServiceCategory,Service
 from rest_framework import filters
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
 
 # Create your views here.
 
@@ -17,6 +19,8 @@ class ServiceCategoryViewById(RetrieveUpdateAPIView):
 
 
 class ServiceView(ListCreateAPIView):
+    # permission_classes = (IsAuthenticated,)
+
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     filter_backends = [filters.SearchFilter]

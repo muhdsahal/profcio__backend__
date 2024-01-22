@@ -96,7 +96,7 @@ class VerifyUserView(APIView):
                 access_token = str(refresh.access_token)
 
                 if context == 'employee':
-                    redirect_url = 'http://localhost:5173/employee/employee_login/'
+                    redirect_url = 'http://localhost:5173/employee_login/'
                 else:
                     redirect_url = 'http://localhost:5173/login/'
                 
@@ -234,9 +234,9 @@ class PassWordChange(APIView):
             # Save the user to update the password
             user.save()
 
-            print(user.password)
-            print(user, "user data is getting")
-            print(password, uid, decoded_id, 'passwordpasswordpasswordpasswordpassword')
+            # print(user.password)
+            # print(user, "user data is getting")
+            # print(password, uid, decoded_id, 'passwordpasswordpasswordpasswordpassword')
 
             return Response(status=status.HTTP_200_OK)
 
@@ -250,7 +250,6 @@ class VerifyReset(APIView):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-            
             context = user.user_type
             # print(context,'usertype///////usertype/////usertype')
             if context == 'employee':
@@ -258,7 +257,7 @@ class VerifyReset(APIView):
             else:
                 redirect_url = f'http://localhost:5173/reset_password/{uidb64}/{token}'
                 
-                return redirect(redirect_url)
+            return redirect(redirect_url)
 
         except ObjectDoesNotExist:
             message = 'Activation Link Expired, please register again'
@@ -352,37 +351,6 @@ class GoogleLogin(APIView):
             return Response(data=data)
 
 
-# class GoogleAuthentication(APIView):
-#     def post(self, request):
-#         email = request.data.get('email')
-#         password = request.data.get('password')
-        
-
-#         if not User.objects.filter(email=email, is_google=True).exists():
-#             serializer = UserSerializer(data=request.data)
-#             if serializer.is_valid(raise_exception=True):
-#                 user = serializer.save()
-#                 user.user_type = "user"
-#                 user.is_active = True
-#                 user.is_google = True
-#                 user.set_password(password)
-#                 user.save()
-
-#         user = authenticate(email=email,password=password)
-
-#         if user is not None:
-#             token = create_jwt_pair_token(user)
-#             response_data = {
-#                 'status': 'Success',
-#                 'msg': 'Registration Successfully',
-#                 'token': token,
-#             }
-
-#             return Response(response_data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response({'status': 'error', 'msg': 'Authentication failed'})
-
-
 def create_jwt_pair_token(user):
     refresh = RefreshToken.for_user(user)
     refresh['email'] = user.email
@@ -400,7 +368,7 @@ def create_jwt_pair_token(user):
     }
 
 class Authentication(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     def get(self,request):
         content={'user':str(request.user),
                 'userid':str(request.user.id),
@@ -410,40 +378,17 @@ class Authentication(APIView):
         return Response(content)
 
 class UserDetails(ListAPIView):
-    # permission_classes =(IsAuthenticated,)
-
-    queryset = User.objects.all().order_by('id')
+    queryset = User.objects.exclude(is_superuser=True).order_by("id")
     serializer_class = UserSerializer
     lookup_field = 'id'
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'id', 'email', 'user_type']
 
-                                                          
-
-class Userblock(APIView):
-    def put(self,request,*args, **kwargs):
-        # get value from url parameter
-        value_to_update = kwargs.get('pk')
-        if value_to_update is None:
-            return Response({'error':'Please Provide a Proper input.'},status=status.HTTP_400_BAD_REQUEST)
-        try:
-            #retrive user instance based on provided pk
-            instance = User.objects.get(pk=value_to_update)
-        except User.DoesNotExist:
-            return Response({'error':f'user with id={value_to_update} does not exist'},status=status.HTTP_404_NOT_FOUND)
-        
-        #toggle the value of is_active
-        instance.is_active = not instance.is_active
-        serializer = UserSerializer(instance,data=request.data,partial = True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
-
+class Userblock(RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class =UserSerializer                                                         
 
 class EmployeeProfileData(ListCreateAPIView):
-    # permission_classes =(IsAuthenticated,)
     
     queryset = User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
@@ -453,9 +398,8 @@ class EmployeeProfileDataWithId(RetrieveUpdateAPIView):
     serializer_class = EmployeedataSerializer
     
 #userprofile class
-class UserProfile(generics.ListCreateAPIView):
-    # permission_classes =(IsAuthenticated,)
-
+class UserProfile(RetrieveUpdateAPIView):
+    
     serializer_class = UserSerializer
     def get_object(self,user_id):
         try:
@@ -474,4 +418,11 @@ class UserProfile(generics.ListCreateAPIView):
             return Response(serializer.data)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self,request,user_id):
+        user = self.get_object(user_id)
+        serializer = self.serializer_class(user,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 

@@ -16,7 +16,6 @@ urlpatterns = [
     path('auth/verify/<str:uidb64>/<str:token>/', VerifyUserView.as_view(), name='verify-user'),
     path('password_reset/',PasswordResetAPIView.as_view(), name='password_reset'),
     path('password_change/',PassWordChange.as_view(),name='password_change'),
-    # path('password_reset_confirm/<str:uidb64>/<str:token>/', PasswordResetAPIView.as_view(), name='password_reset_confirm'),
     path('userdetails/',UserDetails.as_view(),name='user_details'),
     path('password_reset_confirm_validation/<str:uidb64>/<str:token>/',VerifyReset.as_view(),name='password_reset_confirm_validation'),
     path('authentication/',Authentication.as_view(), name='Authentication'),

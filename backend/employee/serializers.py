@@ -15,6 +15,11 @@ class EmployeeBookingSerializer(serializers.ModelSerializer):
         model = EmployeeBooking
         fields = '__all__'
 
+class BookingStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeBooking
+        fields = '__all__'
+
 class EmployeeAbsenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeAbsence

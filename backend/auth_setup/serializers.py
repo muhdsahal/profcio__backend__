@@ -4,12 +4,12 @@ from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile_photo = serializers.ImageField(allow_null=True, required=False)
+    # profile_photo = serializers.ImageField(allow_null=True, required=False)
 
     class Meta:
         model = User
         fields = ['id','username','email','profile_photo','user_type','phone_number',
-                  'work','place','description','experience','charge']
+                  'work','place','description','experience','charge','is_active']
         extra_kwargs ={
             'password' : {'write_only':True},
         }
@@ -31,16 +31,6 @@ class GoogleAuthSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={"input_type": "passsword"}, write_only=True
     )
-    # class Meta:
-    #     model = User
-    #     fields =('id','username','email','profile_photo',
-    #              "phone_number",'user_type','is_google','is_active','password')
-    #     # extra_kwargs ={
-    #     #     'password':{'write_only':True}
-    #     # }
-    # password2 = serializers.CharField(
-    #     style={"input_type": "passsword"}, write_only=True
-    # )
 
     class Meta:
         model = User
@@ -60,11 +50,6 @@ class GoogleAuthSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user    
-class EditUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields =['id','username','email','profile_image','user_type',
-                 "phone_number",'is_google','is_active']
         
 class EmployeedataSerializer(serializers.ModelSerializer):
     profile_photo = serializers.ImageField(required=False)
@@ -72,20 +57,7 @@ class EmployeedataSerializer(serializers.ModelSerializer):
     class Meta:
         model  = User
         fields = ['id','username','email','profile_photo','user_type','phone_number','is_google',
-                  'work','place','description','experience','charge']
+                  'work','place','description','experience','charge','is_active']
 
 
-
-
-# class CustomUserserializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['username','email','phone_number']
-
-# class EmployeeBookingSerializer(serializers.ModelSerializer):
-#     userDetails = CustomUserserializer(source = 'user', read_only = True)
-#     employeeDetails = CustomUserserializer(source = 'employee', read_only = True)
-#     class Meta:
-#         model = EmployeeBooking
-#         fields = '__all__'
  

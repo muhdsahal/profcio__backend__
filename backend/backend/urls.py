@@ -24,6 +24,7 @@ urlpatterns = [
     path('auth/',include('auth_setup.urls')),
     path('service/',include('service.urls')),
     path('employee/',include('employee.urls')),
+    path('chat/',include('chat.urls'))
 
           
          
