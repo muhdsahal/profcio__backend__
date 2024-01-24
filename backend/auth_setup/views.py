@@ -398,31 +398,71 @@ class EmployeeProfileDataWithId(RetrieveUpdateAPIView):
     serializer_class = EmployeedataSerializer
     
 #userprofile class
+# class UserProfile(RetrieveUpdateAPIView):
+    
+#     serializer_class = UserSerializer
+#     def get_object(self,user_id):
+#         try:
+#             return User.objects.get(id=user_id)
+#         except User.DoesNotExist:
+#             raise Http404
+#     def get(self,request,user_id):
+#         user = self.get_object(user_id)
+#         serializer = self.serializer_class(user)
+#         return Response(serializer.data)
+#     def put(self,request,user_id):
+#         user = self.get_object(user_id)
+#         serializer = self.serializer_class(user,data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+#     def patch(self,request,user_id):
+#         user = self.get_object(user_id)
+#         serializer = self.serializer_class(user,data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
 class UserProfile(RetrieveUpdateAPIView):
     
     serializer_class = UserSerializer
-    def get_object(self,user_id):
+
+    def get_object(self, user_id):
         try:
             return User.objects.get(id=user_id)
         except User.DoesNotExist:
             raise Http404
-    def get(self,request,user_id):
+
+    def get(self, request, user_id):
         user = self.get_object(user_id)
         serializer = self.serializer_class(user)
         return Response(serializer.data)
-    def put(self,request,user_id):
+
+    def put(self, request, user_id):
         user = self.get_object(user_id)
-        serializer = self.serializer_class(user,data=request.data)
+        serializer = self.serializer_class(user, data=request.data)
+        
+        # Set is_active to its current value if not provided in request
+
         if serializer.is_valid():
+            if 'is_active' not in request.data:
+                serializer.validated_data['is_active'] = user.is_active
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self,request,user_id):
+    def patch(self, request, user_id):
         user = self.get_object(user_id)
-        serializer = self.serializer_class(user,data=request.data)
+        serializer = self.serializer_class(user, data=request.data)
+        
         if serializer.is_valid():
+            # Set is_active to its current value if not provided in request
+            if 'is_active' not in request.data:
+                serializer.validated_data['is_active'] = user.is_active
+
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

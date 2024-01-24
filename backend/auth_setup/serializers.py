@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'work','place','description','experience','charge','is_active']
         extra_kwargs ={
             'password' : {'write_only':True},
+            
         }
 
 
@@ -22,6 +23,7 @@ class myTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls,user):
         token = super().get_token(user)
         token['email']=user.email
+        token['username']= user.username
         token['user_type'] =user.user_type
         token['is_active'] = user.is_active
         token['is_admin'] = user.is_superuser

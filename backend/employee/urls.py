@@ -12,5 +12,8 @@ urlpatterns = [
     path('booking_status/<int:pk>/', BookingStatusUpdate.as_view(), name='booking_status'),
     path('employee_absence/', create_employee_absence, name='create_employee_absence'),
     path('employee_absences/<int:emp_id>/', get_employee_absences, name='get_employee_absences'),
+    path('review/', ReviewRating.as_view(), name='review'),
+    path('review/<int:pk>/', ReviewByEmployeeId.as_view(), name='review'),
+    
 
 ]

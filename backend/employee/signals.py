@@ -11,6 +11,5 @@ def send_reciept(sender,instance,created,*args, **kwargs):
         userEmail = instance.user.email
         employeeName = instance.employee.username
         bookedDate = instance.booking_date
-        print(username,userEmail,employeeName,bookedDate,'check the signals work or not')
         BookingSendingMail(username,employeeName,bookedDate,userEmail)
         

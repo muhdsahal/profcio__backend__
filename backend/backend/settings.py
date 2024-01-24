@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'dj_rest_auth', # pip install "dj-rest-auth[with_social]==4.0.0"
     'dj_rest_auth.registration',
     # 'rest_framework_simplejwt.token_blacklist',
+    'django_celery_results',
+    'django_celery_beat',
  
 ]
 
@@ -257,6 +259,7 @@ CELERY_RESULT_SERIALIZER ='json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata' 
 
+CELERY_BEAT_SCHEDULER  = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',

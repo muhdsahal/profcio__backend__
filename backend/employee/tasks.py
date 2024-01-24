@@ -11,8 +11,13 @@ def BookingSendingMail(username,employeeName,bookedDate,userEmail):
     subject ="Profcio | Booking confirmation"
         
     message = f"""Hy {username}. Your Booking has been successfully.
-            Your selected employee: {employeeName} in {bookedDate} day.
-            Thank you for choosing Profcio ."""
+    Your selected employee: {employeeName} in {bookedDate} day.
+    Thank you for choosing Profcio ."""
     from_email = "profcioweb@gmail.com"
     recipient_list = [userEmail] 
     send_mail(subject,message, from_email, recipient_list, fail_silently=True)
+
+
+@shared_task
+def celerybeatcheck():
+    print("beat working.................")
