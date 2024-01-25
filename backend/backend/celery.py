@@ -16,14 +16,10 @@ app.config_from_object(settings,namespace='CELERY')
 #Celery Beat Settings
 
 app.conf.beat_schedule = {
-
-    'send-mail-every-day-at-8':{
-        'task':'employee.tasks.celerybeatcheck',
-        'schedule':crontab(),
-        # 'schedule':crontab(),
-        # 'args':(2,)
+  'send-booking-reminders': {
+    'task': 'employee.tasks.send_booking_reminders',
+    'schedule': crontab(hour=20, minute=40),  # Set the schedule as needed
     },
-       
 }
 
 
@@ -32,3 +28,11 @@ app.autodiscover_tasks()
 @app.task(bind=True)
 def debug_task(self):
     print(f'Request:{self.request!r}')
+
+
+  # 'send-mail-every-day-at-8':{
+    #     'task':'employee.tasks.celerybeatcheck',
+    #     'schedule':crontab(hour=0,minute=5),
+    #     # 'schedule':crontab(),
+    #     # 'args':(2,)
+    # },

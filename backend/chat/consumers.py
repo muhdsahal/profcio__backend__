@@ -23,12 +23,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        print("handshake connected websocket....")
+        # print("handshake connected websocket....")
         await self.accept()
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name,self.channel_name)
-        print("disconnect",self.channel_layer)
+        # print("disconnect",self.channel_layer)
         await super().disconnect(close_code)
 
     

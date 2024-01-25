@@ -47,7 +47,10 @@ class Review(models.Model):
 
     class Meta:
         unique_together = ['employee', 'user']
-#employee absend model
+
+
+
+#employee absend model        
 class EmployeeAbsence(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='absences')
     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='absentees')

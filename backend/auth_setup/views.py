@@ -167,14 +167,13 @@ class EmployeeRegister(CreateAPIView):
             try:
                 send_mail(subject,message,from_email,recipient_list)
             except Exception as e:
-                print(f"Error sending :{e}")
+                Response(f"Error sending :{e}")
             data = {
                 "text":"account created,",
                 "status": 200
             }
             return Response(data=data)
         else:
-            print('Serializer error are :' ,serializer.errors)
             return Response({'status':'error','msg':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
 class PasswordResetAPIView(APIView):
@@ -183,21 +182,15 @@ class PasswordResetAPIView(APIView):
         if not email:
             return Response({'detail': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
         
-        
         user = User.objects.get(email=email)
-        # print(user.username,'userrrrrrrrrr')
     
-
         try:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.id))
-            # print(uid,token,'uidsuidudiudiudidudiudiudi')
-            
-            # uid = force_str(urlsafe_base64_decode(uidb64))
+
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
-            print('eeeeeeeeererrrrrrrrrrrrrrror')
             return Response(status=status.HTTP_401_UNAUTHORIZED)
             
         reset_url = reverse('password_reset_confirm_validation', kwargs={'uidb64':uid,'token':token})
@@ -209,7 +202,6 @@ class PasswordResetAPIView(APIView):
 
         from_email = 'profcioweb@gmail.com'
         recipient_list = [user.email]
-        # print(subject, message, from_email, recipient_list)
         send_mail(subject, message, from_email, recipient_list)
         return Response(status=status.HTTP_201_CREATED)
     
@@ -233,15 +225,9 @@ class PassWordChange(APIView):
 
             # Save the user to update the password
             user.save()
-
-            # print(user.password)
-            # print(user, "user data is getting")
-            # print(password, uid, decoded_id, 'passwordpasswordpasswordpasswordpassword')
-
             return Response(status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            # Handle the case where the user with the specified ID is not found
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class VerifyReset(APIView):
@@ -251,7 +237,6 @@ class VerifyReset(APIView):
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
             context = user.user_type
-            # print(context,'usertype///////usertype/////usertype')
             if context == 'employee':
                 redirect_url = f'http://localhost:5173/employee/reset_password/{uidb64}/{token}'
             else:
@@ -264,7 +249,6 @@ class VerifyReset(APIView):
             return JsonResponse({'error': message}, status=400)
 
         except Exception as e:
-            # Handle other exceptions if needed
             message = f'An error occurred during verification: {str(e)}'
             return JsonResponse({'error': message}, status=500)
 
@@ -367,15 +351,6 @@ def create_jwt_pair_token(user):
         "refresh": refresh_token
     }
 
-class Authentication(APIView):
-    # permission_classes = (IsAuthenticated,)
-    def get(self,request):
-        content={'user':str(request.user),
-                'userid':str(request.user.id),
-                'email':str(request.user.email),
-                'is_active':str(request.user.is_active)
-        }
-        return Response(content)
 
 class UserDetails(ListAPIView):
     queryset = User.objects.exclude(is_superuser=True).order_by("id")
@@ -397,39 +372,11 @@ class EmployeeProfileDataWithId(RetrieveUpdateAPIView):
     queryset = User.objects.filter(user_type='employee')
     serializer_class = EmployeedataSerializer
     
-#userprofile class
-# class UserProfile(RetrieveUpdateAPIView):
-    
-#     serializer_class = UserSerializer
-#     def get_object(self,user_id):
-#         try:
-#             return User.objects.get(id=user_id)
-#         except User.DoesNotExist:
-#             raise Http404
-#     def get(self,request,user_id):
-#         user = self.get_object(user_id)
-#         serializer = self.serializer_class(user)
-#         return Response(serializer.data)
-#     def put(self,request,user_id):
-#         user = self.get_object(user_id)
-#         serializer = self.serializer_class(user,data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-#     def patch(self,request,user_id):
-#         user = self.get_object(user_id)
-#         serializer = self.serializer_class(user,data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfile(RetrieveUpdateAPIView):
     
     serializer_class = UserSerializer
-
     def get_object(self, user_id):
         try:
             return User.objects.get(id=user_id)
@@ -445,8 +392,6 @@ class UserProfile(RetrieveUpdateAPIView):
         user = self.get_object(user_id)
         serializer = self.serializer_class(user, data=request.data)
         
-        # Set is_active to its current value if not provided in request
-
         if serializer.is_valid():
             if 'is_active' not in request.data:
                 serializer.validated_data['is_active'] = user.is_active
@@ -459,7 +404,6 @@ class UserProfile(RetrieveUpdateAPIView):
         serializer = self.serializer_class(user, data=request.data)
         
         if serializer.is_valid():
-            # Set is_active to its current value if not provided in request
             if 'is_active' not in request.data:
                 serializer.validated_data['is_active'] = user.is_active
 

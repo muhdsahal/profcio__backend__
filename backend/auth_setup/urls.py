@@ -18,7 +18,6 @@ urlpatterns = [
     path('password_change/',PassWordChange.as_view(),name='password_change'),
     path('userdetails/',UserDetails.as_view(),name='user_details'),
     path('password_reset_confirm_validation/<str:uidb64>/<str:token>/',VerifyReset.as_view(),name='password_reset_confirm_validation'),
-    path('authentication/',Authentication.as_view(), name='Authentication'),
     path('user_profile/<int:user_id>/',UserProfile.as_view(),name='userprofile'),
     path('employeelisting/',EmployeeProfileData.as_view(),name='EmployeeListing'),
     path('employeelisting/<int:pk>/',EmployeeProfileDataWithId.as_view(),name='EmployeeListing'),

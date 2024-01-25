@@ -18,12 +18,10 @@ class EmployeeBookingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_is_reviewed(self, obj):
-        # Check if there is any review for this user and employee
         is_reviewed = Review.objects.filter(employee=obj.employee, user=obj.user).exists()
         return is_reviewed
 
 class BookingStatusSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = EmployeeBooking
         fields = '__all__'
