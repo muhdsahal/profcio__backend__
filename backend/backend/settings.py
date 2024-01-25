@@ -60,9 +60,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount', # add if you want social authentication
     # 'social_django',
 
-    'dj_rest_auth', # pip install "dj-rest-auth[with_social]==4.0.0"
+    'dj_rest_auth', 
     'dj_rest_auth.registration',
-    # 'rest_framework_simplejwt.token_blacklist',
     'django_celery_results',
     'django_celery_beat',
  
@@ -83,15 +82,6 @@ MIDDLEWARE = [
     # 'social_django.middleware.SocialAuthExceptionMiddleware',
 
 ]
-
-# AUTHENTICATION_BACKENDS = [
-#     'social_core.backends.google.GoogleOAuth2',
-#     'django.contrib.auth.backends.ModelBackend',
-#     'social_core.backends.django.DjangoOAuth2',  # Use this if you don't have a custom backend
-# ]
-
-# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1026084967688-s5uu23t8b7mc4rq25ae3is6sm32jiooo.apps.googleusercontent.com'
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 ROOT_URLCONF = 'backend.urls'
  
@@ -166,16 +156,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION ='backend.asgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 
 DATABASES = {
@@ -252,13 +233,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+#celery configration
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER ='json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata' 
 
+CELERY_RESULT_BACKEND = 'django-db'
+#celery beat settings
 CELERY_BEAT_SCHEDULER  = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 PASSWORD_HASHERS = [
