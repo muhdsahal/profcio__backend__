@@ -9,7 +9,7 @@ app = Celery('backend')
 app.conf.enable_utc = False
 
 
-app.conf.update(timezone ='Asia/Mumbai')
+app.conf.update(timezone ='Asia/Kolkata')
 
 app.config_from_object(settings,namespace='CELERY')
 
@@ -18,7 +18,7 @@ app.config_from_object(settings,namespace='CELERY')
 app.conf.beat_schedule = {
   'send-booking-reminders': {
     'task': 'employee.tasks.send_booking_reminders',
-    'schedule': crontab(hour=20, minute=40),  # Set the schedule as needed
+    'schedule': crontab(hour=11, minute=0),  # Set the schedule as needed
     },
 }
 

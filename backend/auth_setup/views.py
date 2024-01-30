@@ -207,7 +207,6 @@ class PasswordResetAPIView(APIView):
     
 
 class PassWordChange(APIView):
-
     def post(self, request):
         # Get new password and uid from the request data
         password = request.data.get('new_password')

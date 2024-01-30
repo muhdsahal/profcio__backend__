@@ -26,29 +26,26 @@ def BookingSendingMail(username,employeeName,bookedDate,userEmail):
     send_mail(subject,message, from_email, recipient_list, fail_silently=True)
 
 
+
 @shared_task
 def send_booking_reminders():
     try:
-        # Calculate the target time (8:40 PM) on the previous day
-        # target_time = datetime.combine(time(20, 40), time.min)
+        # Calculate the target time (10:00 AM) for the current day
+        target_time = datetime.combine(time(11, 0), time.min)
         current_time = timezone.now()
 
-        # If the current time is before the target time, use the previous day
-        if current_time.time() < target_time.time():
-            target_time -= timedelta(days=1)
-
-        # Calculate the time 8 hours before the target time
-        # eight_hours_before_target = target_time - timedelta(hours=8)
-
-        # Filter bookings within the time range
+        # Filter bookings within the time range for the current day
         bookings_to_remind = EmployeeBooking.objects.filter(
-            booking_date__lt=target_time,
+            booking_date__gte=current_time,
+            booking_date__lt=target_time + timedelta(days=1),  
             is_booked=True,
         )
 
+        print(bookings_to_remind, 'bookings_to_remindbookings_to_remindbookings_to_remind')
+        
         for booking in bookings_to_remind:
             subject = 'Profcio || Booking Reminder'
-            message = f"Your booking with {booking.employee.username} is scheduled \n for {booking.booking_date}. "
+            message = f"Your booking with {booking.employee.username} is scheduled for {booking.booking_date}."
             from_email = 'profcioweb@gmail.com'
             to_email = [booking.user.email]
 
@@ -57,7 +54,6 @@ def send_booking_reminders():
         logging.info('Booking reminders sent successfully.')
     except Exception as e:
         logging.error(f'Error sending booking reminders: {e}')
-
 
 
 
@@ -71,7 +67,7 @@ def send_booking_reminders():
 #     Thank you for choosing Profcio ."""
     
 #     from_email = "profcioweb@gmail.com"
-#     recipient_list = ['sahalshalu830@gmail.com']  # Use a list or tuple for recipient_list
+#     recipient_list = ['sahalshalu830@gmail.com']  
 
 #     send_mail(subject, message, from_email, recipient_list, fail_silently=True)
 

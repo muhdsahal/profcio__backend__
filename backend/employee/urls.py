@@ -13,6 +13,7 @@ urlpatterns = [
     path('employee_absences/<int:emp_id>/', get_employee_absences, name='get_employee_absences'),
     path('review/', ReviewRating.as_view(), name='review'),
     path('review/<int:pk>/', ReviewByEmployeeId.as_view(), name='review'),
+    path('review_edit/<int:pk>/', ReviewRatingById.as_view(), name='review'),
     
 
 ]

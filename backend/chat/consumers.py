@@ -8,7 +8,6 @@ from asgiref.sync import sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        
         current_user_id=int(self.scope['query_string'])
         other_user_id=self.scope['url_route']['kwargs']['id']
         self.room_name=(
@@ -102,3 +101,42 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
 
 
+class Notification_Consumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        try:
+            self.group_name = 'user_group'
+            await self.channel_layer.group_add(
+                self.group_name,
+                self.channel_name
+            )
+            print("conected suiiiiiiiiiiiiiiiiiiiiiiiii")
+            await self.accept()
+        except Exception as e:
+            print("error    jfbhgvjdddddddddddddddddddds", e)
+
+    async def disconnect(self, close_code):
+        try:
+            print("Disconnecting from WebSocket")
+            await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        except Exception as e:
+            print("Error in disconnect user notif:", e)
+        finally:
+            await super().disconnect(close_code)
+
+        
+    async def receive(self, text_data):
+        try:
+            message = json.loads(text_data)
+            print("user_Received message:", message)
+        except Exception as e:
+            print("Error in receive user noti:", e)
+    
+    async def create_notification(self, event):
+        try:
+            message = event['message']
+            await self.send(json.dumps({
+
+                'message': message
+            }))
+        except Exception as e:
+            print("Error in create user notifications", e)

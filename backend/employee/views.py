@@ -149,6 +149,8 @@ class BookedByEmployeeID(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
+
 class ReviewByEmployeeId(APIView):
     def get(self,request,*args, **kwargs):
         emp_id = kwargs.get('pk')
@@ -161,9 +163,25 @@ class ReviewByEmployeeId(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
+    # def patch(self,request,*args, **kwargs):
+    #     emp_id = kwargs.get('pk')
+    #     try :
+    #         review_of_emp = Review.objects.filter(employee=emp_id)
+    #     except :
+    #         pass
+    #     serializer = ReviewSerializer(review_of_emp,many=True)
+    #     if serializer:
+    #         return Response(serializer.data)
+    #     else:
+    #         return Response(serializer.errors)
+    
 
 class ReviewRating(ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
+class ReviewRatingById(RetrieveUpdateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
 
