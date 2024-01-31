@@ -2,9 +2,9 @@ import json
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from datetime import datetime
-
 from django.contrib.auth import get_user_model
 from asgiref.sync import sync_to_async
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -103,6 +103,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 class Notification_Consumer(AsyncWebsocketConsumer):
     async def connect(self):
+        from push_notifications.models import Notifications
         try:
             self.group_name = 'user_group'
             await self.channel_layer.group_add(
@@ -116,20 +117,21 @@ class Notification_Consumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         try:
-            print("Disconnecting from WebSocket")
-            await self.channel_layer.group_discard(self.group_name, self.channel_name)
+            await self.channel_layer.group_discard(
+                self.group_name,
+                self.channel_name
+            )
+            print("Error in disconnect admin notif:")
         except Exception as e:
-            print("Error in disconnect user notif:", e)
-        finally:
-            await super().disconnect(close_code)
+            print("Error in disconnect admin notif:", e)
 
         
     async def receive(self, text_data):
         try:
             message = json.loads(text_data)
-            print("user_Received message:", message)
+            print("user_Received message:your booking successfullly completed", message)
         except Exception as e:
-            print("Error in receive user noti:", e)
+            print("Error in receive user notification:", e)
     
     async def create_notification(self, event):
         try:

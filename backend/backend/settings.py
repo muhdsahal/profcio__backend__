@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'service',
     'employee',
     'chat',
+    'push_notifications',
     # social authentication
     'allauth', # pip install django-allauth==0.52.0
     'allauth.account',

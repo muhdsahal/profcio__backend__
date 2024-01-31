@@ -82,11 +82,11 @@ class EmployeeBookingSubmit(APIView):
             user_id = self.request.data.get('userId')
             employee_id = self.request.data.get('empId')
             date_str = self.request.data.get('date')
-            print(date_str, user_id, employee_id, 'all data datestrrrrrrrrrr')
+            # print(date_str, user_id, employee_id, 'all data datestrrrrrrrrrr')
 
             # Convert the date string to a datetime object without explicit formatting
             date_object = datetime.fromisoformat(date_str)
-            print(date_object,'datedateobjectdateobjedctdateobject')
+            # print(date_object,'datedateobjectdateobjedctdateobject')
             formatted_date = date_object.date()
 
             existing_booking = EmployeeBooking.objects.filter(
@@ -164,19 +164,7 @@ class ReviewByEmployeeId(APIView):
         else:
             return Response(serializer.errors)
         
-    # def patch(self,request,*args, **kwargs):
-    #     emp_id = kwargs.get('pk')
-    #     try :
-    #         review_of_emp = Review.objects.filter(employee=emp_id)
-    #     except :
-    #         pass
-    #     serializer = ReviewSerializer(review_of_emp,many=True)
-    #     if serializer:
-    #         return Response(serializer.data)
-    #     else:
-    #         return Response(serializer.errors)
     
-
 class ReviewRating(ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
