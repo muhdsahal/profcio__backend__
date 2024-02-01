@@ -96,9 +96,9 @@ class VerifyUserView(APIView):
                 access_token = str(refresh.access_token)
 
                 if context == 'employee':
-                    redirect_url = 'http://localhost:5173/employee_login/'
+                    redirect_url = 'https://profcio.molla.cloud/employee_login/'
                 else:
-                    redirect_url = 'http://localhost:5173/login/'
+                    redirect_url = 'https://profcio.molla.cloud/login/'
                 
                 return redirect(redirect_url)
 
@@ -237,9 +237,9 @@ class VerifyReset(APIView):
             user = User.objects.get(pk=uid)
             context = user.user_type
             if context == 'employee':
-                redirect_url = f'http://localhost:5173/employee/reset_password/{uidb64}/{token}'
+                redirect_url = f'https://profcio.molla.cloud/employee/reset_password/{uidb64}/{token}'
             else:
-                redirect_url = f'http://localhost:5173/reset_password/{uidb64}/{token}'
+                redirect_url = f'https://profcio.molla.cloud/reset_password/{uidb64}/{token}'
                 
             return redirect(redirect_url)
 
