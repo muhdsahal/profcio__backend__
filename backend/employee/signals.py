@@ -17,7 +17,9 @@ def send_reciept(sender,instance,created,*args, **kwargs):
         userEmail = instance.user.email
         employeeName = instance.employee.username
         bookedDate = instance.booking_date
-        BookingSendingMail(username,employeeName,bookedDate,userEmail)
+        price = instance.price
+        # message = 
+        BookingSendingMail(username,employeeName,bookedDate,userEmail, price)
 
 @receiver(post_save, sender=EmployeeBooking)
 def send_booking_notification(created, instance, sender, *args, **kwargs):

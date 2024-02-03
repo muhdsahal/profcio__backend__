@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Proficio</title>
+    <style>
+        /* Add your styling for the invoice here */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h2>Invoice - Proficio</h2>
+    <table>
+        <tr>
+            <th>Booking Details</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>User</td>
+            <td>{{ instance.user.username }}</td>
+        </tr>
+        <tr>
+            <td>Employee</td>
+            <td>{{ instance.employee.username }}</td>
+        </tr>
+        <tr>
+            <td>Booking Date</td>
+            <td>{{ instance.booking_date }}</td>
+        </tr>
+        <tr>
+            <td>Price</td>
+            <td>{{ instance.price }}</td>
+        </tr>
+        <!-- Add other details as needed -->
+    </table>
+    <p>Thank you for choosing Proficio.</p>
+</body>
+</html>

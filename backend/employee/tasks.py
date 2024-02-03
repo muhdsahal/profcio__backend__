@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.utils import timezone
 import logging
 from datetime import datetime, timedelta, time
-
+from django.template.loader import render_to_string
 
 
 @shared_task(bind=True)
@@ -14,18 +14,29 @@ def test_func(self):
         print(i)
     return "Done"
 
-@shared_task
-def BookingSendingMail(username,employeeName,bookedDate,userEmail):
-    subject ="Profcio | Booking confirmation"
+# @shared_task
+# def BookingSendingMail(username,employeeName,bookedDate,userEmail, price):
+#     subject ="Profcio | Booking confirmation"
         
-    message = f"""Hy {username}. Your Booking has been successfully.
-    Your selected employee: {employeeName} in {bookedDate} day.
-    Thank you for choosing Profcio ."""
+#     message = f"""Hy {username}. Your Booking has been successfully.
+#     Your selected employee: {employeeName} in {bookedDate} day.
+#     Thank you for choosing Profcio ."""
+#     from_email = "profcioweb@gmail.com"
+#     recipient_list = [userEmail] 
+#     send_mail(subject,message, from_email, recipient_list, fail_silently=True)
+
+@shared_task
+def BookingSendingMail(username, employeeName, bookedDate, userEmail, price):
+    subject = "Profcio | Booking confirmation and Invoice"
+
+    # Render HTML template
+    html_content = render_to_string('invoice_template1.html', {'instance': {'user': {'username': username}, 'employee': {'username': employeeName}, 'booking_date': bookedDate, 'price': price}})
+
     from_email = "profcioweb@gmail.com"
-    recipient_list = [userEmail] 
-    send_mail(subject,message, from_email, recipient_list, fail_silently=True)
-
-
+    recipient_list = [userEmail]
+    
+    # Send email with HTML content
+    send_mail(subject, "", from_email, recipient_list, html_message=html_content, fail_silently=True)
 
 @shared_task
 def send_booking_reminders():
