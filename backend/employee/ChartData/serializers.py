@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from employee.models import EmployeeBooking
 from auth_setup.models import User
+
 class EmployeeBookingSalesReportSerializer(serializers.Serializer):
     created_date = serializers.DateField()
     total_sales = serializers.IntegerField()
 
 
-class Check(serializers.ModelSerializer):
+class BookingEmployeeReportSerializer(serializers.ModelSerializer):
     booking_count = serializers.SerializerMethodField()
     total_price = serializers.SerializerMethodField()
     pending_count = serializers.SerializerMethodField()

@@ -1,19 +1,20 @@
 from employee.models import EmployeeBooking
 from auth_setup.models import User
-from rest_framework import serializers
 from rest_framework import generics
 from django.http import Http404, JsonResponse
 from django.db.models import Sum,Count
-from .serializers import Check
+from .serializers import BookingEmployeeReportSerializer
 
 #total users count
 class UserCountApiView(generics.RetrieveAPIView):
     def get(self,request,*args, **kwargs):
+        all_user = User.objects.exclude(is_superuser=True).count()
         user_count = User.objects.filter(user_type='user').count()
         employee_count = User.objects.filter(user_type='employee').count()
         response_data = {
-            'users':[user_count,employee_count]
+            'users':[all_user,user_count,employee_count]
         }
+        
         return JsonResponse(response_data)
 
 
@@ -31,8 +32,8 @@ class BookingDetialsApi(generics.RetrieveAPIView):
         }
         return JsonResponse(response_data)
     
-class BookingCountApi(generics.RetrieveUpdateAPIView):
-    serializer_class = Check
+class BookingReportEmployeeApi(generics.RetrieveUpdateAPIView):
+    serializer_class = BookingEmployeeReportSerializer
 
     def get_queryset(self):
         employee_id = self.kwargs['employee_id']
