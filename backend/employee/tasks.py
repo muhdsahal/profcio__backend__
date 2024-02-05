@@ -27,10 +27,13 @@ def test_func(self):
 
 @shared_task
 def BookingSendingMail(username, employeeName, bookedDate, userEmail, price):
-    subject = "Profcio | Booking confirmation and Invoice"
+    subject = "Profcio | Booking Confirmation And Invoice"
 
     # Render HTML template
-    html_content = render_to_string('invoice_template1.html', {'instance': {'user': {'username': username}, 'employee': {'username': employeeName}, 'booking_date': bookedDate, 'price': price}})
+    html_content = render_to_string('invoice_template1.html', {'instance': 
+                                    {'user': {'username': username}, 
+                                    'employee': {'username': employeeName},
+                                    'booking_date': bookedDate, 'price': price}})
 
     from_email = "profcioweb@gmail.com"
     recipient_list = [userEmail]

@@ -4,7 +4,9 @@ from rest_framework import generics
 from django.http import Http404, JsonResponse
 from django.db.models import Sum,Count
 from .serializers import BookingEmployeeReportSerializer
-
+from employee.serializers import EmployeeBookingSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 #total users count
 class UserCountApiView(generics.RetrieveAPIView):
     def get(self,request,*args, **kwargs):
@@ -50,3 +52,14 @@ class BookingReportEmployeeApi(generics.RetrieveUpdateAPIView):
         context = super().get_serializer_context()
         context['employee_id'] = self.kwargs['employee_id']
         return context
+    
+
+class SalesReportView(generics.ListAPIView):
+    serializer_class = EmployeeBookingSerializer
+    def get_queryset(self):
+
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        if start_date and end_date and start_date != end_date:
+            queryset = EmployeeBooking.objects.filter(created_date__range=(start_date,end_date))
+            return queryset
