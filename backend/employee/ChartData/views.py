@@ -134,5 +134,6 @@ class SalesReportPDFView(generics.ListAPIView):
             queryset = queryset.filter(created_date__range=(start_date, end_date))
 
         return queryset
+    
 
         
