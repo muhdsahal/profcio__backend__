@@ -23,7 +23,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import chat.routing 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'connectin.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 # Get the Django ASGI application
 django_asgi_application = get_asgi_application()
