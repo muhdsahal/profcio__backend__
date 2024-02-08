@@ -28,7 +28,6 @@ def test_func(self):
 @shared_task
 def BookingSendingMail(username, employeeName, bookedDate, userEmail, price):
     subject = "Profcio | Booking Confirmation And Invoice"
-
     # Render HTML template
     html_content = render_to_string('invoice_template1.html', {'instance': 
                                     {'user': {'username': username}, 
@@ -41,6 +40,16 @@ def BookingSendingMail(username, employeeName, bookedDate, userEmail, price):
     # Send email with HTML content
     send_mail(subject, "", from_email, recipient_list, html_message=html_content, fail_silently=True)
 
+@shared_task
+def BookingMailForEmployee(username,employeeName,BookedDate,employeeEmail):
+    subject  = "Profcio || New Booking For You  "
+    text = f"New Booking added for {employeeName}. Booked by {username} Selected Date : {BookedDate} Please Check Your Profile"
+    from_email = "profcioweb@gmail.com"
+    recipient_list = [employeeEmail]
+    send_mail(subject,text,from_email,recipient_list,fail_silently=True)
+
+
+    
 @shared_task
 def send_booking_reminders():
     try:

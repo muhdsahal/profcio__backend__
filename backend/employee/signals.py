@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import timedelta
-from .tasks import BookingSendingMail
+from .tasks import BookingSendingMail,BookingMailForEmployee
 from .models import EmployeeBooking
 from push_notifications.models import Notifications
 from channels.layers import get_channel_layer
@@ -23,6 +23,16 @@ def send_reciept(sender,instance,created,*args, **kwargs):
         # message = 
         BookingSendingMail(username,employeeName,bookedDate,userEmail, price)
 
+
+@receiver(post_save,sender=EmployeeBooking)
+def send_reciept_employee(sender,instance,created,*args, **kwargs):
+    if created:
+        username = instance.user.username
+        employeeEmail = instance.employee.email
+        employeeName = instance.employee.username
+        BookedDate = instance.booking_date
+
+        BookingMailForEmployee(username,employeeName,employeeEmail, BookedDate)
 
 
 @receiver(booking_notification)
