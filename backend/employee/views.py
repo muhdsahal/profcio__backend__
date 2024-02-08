@@ -16,6 +16,7 @@ from rest_framework.generics  import RetrieveUpdateAPIView,ListAPIView,ListCreat
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from decouple import config
+from .signals import booking_notification
 
 # Create your views here.
 
@@ -51,7 +52,8 @@ class StripePayment(APIView):
             userId = data.get('userId')
             empId = data.get('empId')
             date = data.get('date')
-            success_url = f"https://profcio.molla.cloud/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
+            # success_url = f"https://profcio.molla.cloud/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
+            success_url = f"http://localhost:5173/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
 
             cancel_url = 'https://profcio.molla.cloud/employeedetails/payment/canceled/'
             session =stripe.checkout.Session.create(
@@ -104,6 +106,8 @@ class EmployeeBookingSubmit(APIView):
             booking = EmployeeBooking(
                 user=user, employee=employee, booking_date=formatted_date,is_booked=True)
             booking.save()
+            print(booking,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+            booking_notification.send(sender=booking.__class__,instance=booking)
 
             return Response({"message": "Success"}, status=status.HTTP_201_CREATED)
 

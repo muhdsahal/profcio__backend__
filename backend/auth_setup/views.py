@@ -37,7 +37,7 @@ from decouple import config
 from social_django.utils import psa
 from django.contrib.auth import get_user_model
 import requests
-
+from .signals import user_profile_updated
 # Create your views here.
 
 class myTokenObtainPairView(TokenObtainPairView):
@@ -395,6 +395,7 @@ class UserProfile(RetrieveUpdateAPIView):
             if 'is_active' not in request.data:
                 serializer.validated_data['is_active'] = user.is_active
             serializer.save()
+            user_profile_updated.send(sender=user.__class__, instance=user)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

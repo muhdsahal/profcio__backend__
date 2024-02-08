@@ -6,7 +6,9 @@ from .models import EmployeeBooking
 from push_notifications.models import Notifications
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.dispatch import Signal
 
+booking_notification = Signal()
 channel_layer = get_channel_layer()
 
 
@@ -21,17 +23,12 @@ def send_reciept(sender,instance,created,*args, **kwargs):
         # message = 
         BookingSendingMail(username,employeeName,bookedDate,userEmail, price)
 
-@receiver(post_save, sender=EmployeeBooking)
-def send_booking_notification(created, instance, sender, *args, **kwargs):
-    if created:
+
+
+@receiver(booking_notification)
+def send_booking_notification(sender,instance, **kwargs):
         notification_text = f'you booking for {instance.employee.username} is completed successfully'
         print(notification_text,"------------------->>>>>")
-        notification_type = 'user' 
-        Notifications.objects.create(
-
-            notification_text = notification_text
-             , notificatio_type = notification_type
-        )
         
         async_to_sync(channel_layer.group_send)(
             "user_group",{
