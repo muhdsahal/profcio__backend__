@@ -36,20 +36,20 @@ def BookingSendingMail(username, employeeName, bookedDate, userEmail, price):
 
     from_email = "profcioweb@gmail.com"
     recipient_list = [userEmail]
-    
     # Send email with HTML content
     send_mail(subject, "", from_email, recipient_list, html_message=html_content, fail_silently=True)
 
 @shared_task
 def BookingMailForEmployee(username,employeeName,BookedDate,employeeEmail):
     subject  = "Profcio || New Booking For You  "
-    text = f"New Booking added for {employeeName}. Booked by {username} Selected Date : {BookedDate} Please Check Your Profile"
+    message = f"New Booking added for {employeeName}. Booked by {username} Selected Date : {BookedDate} Please Check Your Profile"
+    print(message,'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
     from_email = "profcioweb@gmail.com"
     recipient_list = [employeeEmail]
-    send_mail(subject,text,from_email,recipient_list,fail_silently=True)
+    send_mail(subject,message,from_email,recipient_list,fail_silently=True)
 
 
-    
+
 @shared_task
 def send_booking_reminders():
     try:
