@@ -48,8 +48,3 @@ def send_booking_notification(sender,instance, **kwargs):
             }
         )
 
-# @receiver(post_save,sender=EmployeeBooking)
-# def schedule_booking_reminder(sender,instance,created,**kwargs):
-#     if created:
-#          # Schedule the task to run 8 hours before booking_date
-#         send_booking_reminder.apply_async((instance.id,),eta=instance.booking_date - timedelta(hours=8))
