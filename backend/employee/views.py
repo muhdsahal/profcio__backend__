@@ -47,6 +47,7 @@ def get_employee_absences(request, emp_id):
 
 class StripePayment(APIView):
     def post (self,request):
+        
         try:
             data = request.data
             userId = data.get('userId')
