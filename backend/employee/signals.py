@@ -20,7 +20,6 @@ def send_reciept(sender,instance,created,*args, **kwargs):
         employeeName = instance.employee.username
         bookedDate = instance.booking_date
         price = instance.price
-        # message = 
         BookingSendingMail(username,employeeName,bookedDate,userEmail, price)
 
 

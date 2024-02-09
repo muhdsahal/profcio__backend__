@@ -52,8 +52,8 @@ class StripePayment(APIView):
             userId = data.get('userId')
             empId = data.get('empId')
             date = data.get('date')
-            # success_url = f"https://profcio.molla.cloud/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
-            success_url = f"http://localhost:5173/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
+            success_url = f"https://profcio.molla.cloud/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
+            # success_url = f"http://localhost:5173/employeedetails/payment/success/?userId={userId}&empId={empId}&date={date}"
 
             cancel_url = 'https://profcio.molla.cloud/employeedetails/payment/canceled/'
             session =stripe.checkout.Session.create(
