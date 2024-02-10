@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from datetime import datetime
 from fpdf import FPDF
 from rest_framework import generics
+
 #total users count
 class UserCountApiView(generics.RetrieveAPIView):
     def get(self,request,*args, **kwargs):
