@@ -31,7 +31,6 @@ class BookingDetialsApi(generics.RetrieveAPIView):
         Booking_pending = EmployeeBooking.objects.filter(booking_status='pending').count()
         Booking_ongoing = EmployeeBooking.objects.filter(booking_status='ongoing').count()
         Booking_completed = EmployeeBooking.objects.filter(booking_status='completed').count()
-        # most_booked_employee = User.objects.annotate(num_bookings=Count('employee')).order_by('-num_bookings').first()
         total_price = EmployeeBooking.objects.all().aggregate(total_price=Sum('price'))
         response_data = {
             'data':[Booking_count,Booking_pending,Booking_ongoing,Booking_completed,total_price]
